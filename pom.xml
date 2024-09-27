@@ -1,16 +1,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>br.ufsc.sigcaps</groupId>
-    <artifactId>sigcaps-parent</artifactId>
+    <artifactId>sigcaps</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <name>SIGCAPS</name>
+    <description>Sistema Inteligente de Gestão de Chamadas de pacientes para atenção primaria em saúde</description>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.4</version>
+        <relativePath/>
+    </parent>
 
     <modules>
         <module>backend</module>
-    <!--        <module>frontend</module>-->
     </modules>
 
     <properties>
@@ -19,14 +27,13 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- DEPENDENCIAS COMPARTILHADOS ENTRE MODULOS -->
+            <!-- Dependências compartilhadas entre os módulos podem ser definidas aqui -->
         </dependencies>
     </dependencyManagement>
 
     <build>
         <plugins>
-            <!-- PLUGINS COMPARTILHADOS ENTRE MODULOS -->
+            <!-- Plugins compartilhados entre módulos -->
         </plugins>
     </build>
-
 </project>
