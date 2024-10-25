@@ -1,4 +1,4 @@
-package br.ufsc.sigcaps.sigcaps;
+package br.ufsc.sigcaps;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

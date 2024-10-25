@@ -14,6 +14,9 @@
 
 	<properties>
 		<java.version>17</java.version>
+		<!--	arrumar esse link do banco pra usar application.properties	-->
+		<liquibase.mongodb.uri>mongodb://user:password@localhost:27017/sigcaps</liquibase.mongodb.uri>
+		<liquibase.change-log>classpath:db/changelog/changelog-master.yaml</liquibase.change-log>
 	</properties>
 
 	<dependencies>
@@ -87,6 +90,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!--TODO: AVALIAR SE PRECISA ADICIONAR MAIS ALGUMA ALTERACAO NO PLUGIN DO SPRING-->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -97,10 +101,34 @@
 				<artifactId>liquibase-maven-plugin</artifactId>
 				<version>4.27.0</version>
 				<configuration>
-					<changeLogFile>classpath:db/changelog/changelog-master.yaml</changeLogFile>
-					<url>${liquibase.database.url}</url>
+					<url>${liquibase.mongodb.uri}</url>
+					<changeLogFile>${liquibase.change-log}</changeLogFile>
 				</configuration>
 			</plugin>
+			<!--TODO: ARRUMAR ISSO AQUI QUE TA GERANDO COISAS ERRADAS-->
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-resources-plugin</artifactId>-->
+<!--				<version>3.2.0</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>copy-frontend</id>-->
+<!--						<phase>prepare-package</phase>-->
+<!--						<goals>-->
+<!--							<goal>copy-resources</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<outputDirectory>${project.build.directory}/classes/public</outputDirectory>-->
+<!--							<resources>-->
+<!--								<resource>-->
+<!--									<directory>../frontend/dist</directory>-->
+<!--									<filtering>false</filtering>-->
+<!--								</resource>-->
+<!--							</resources>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 		</plugins>
 	</build>
 </project>
