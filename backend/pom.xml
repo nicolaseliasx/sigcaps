@@ -90,12 +90,19 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--TODO: AVALIAR SE PRECISA ADICIONAR MAIS ALGUMA ALTERACAO NO PLUGIN DO SPRING-->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>3.3.4</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>org.liquibase</groupId>
 				<artifactId>liquibase-maven-plugin</artifactId>
@@ -105,30 +112,28 @@
 					<changeLogFile>${liquibase.change-log}</changeLogFile>
 				</configuration>
 			</plugin>
-			<!--TODO: ARRUMAR ISSO AQUI QUE TA GERANDO COISAS ERRADAS-->
-<!--			<plugin>-->
-<!--				<groupId>org.apache.maven.plugins</groupId>-->
-<!--				<artifactId>maven-resources-plugin</artifactId>-->
-<!--				<version>3.2.0</version>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<id>copy-frontend</id>-->
-<!--						<phase>prepare-package</phase>-->
-<!--						<goals>-->
-<!--							<goal>copy-resources</goal>-->
-<!--						</goals>-->
-<!--						<configuration>-->
-<!--							<outputDirectory>${project.build.directory}/classes/public</outputDirectory>-->
-<!--							<resources>-->
-<!--								<resource>-->
-<!--									<directory>../frontend/dist</directory>-->
-<!--									<filtering>false</filtering>-->
-<!--								</resource>-->
-<!--							</resources>-->
-<!--						</configuration>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<id>copy-frontend-build</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+							<resources>
+								<resource>
+									<directory>../frontend/build</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>

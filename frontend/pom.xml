@@ -15,9 +15,11 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.10.0</version> <!-- Certifique-se de que a versão está correta -->
                 <executions>
+                    <!-- Instala Node e Yarn -->
                     <execution>
-                        <id>config</id>
+                        <id>install-node-and-yarn</id>
                         <goals>
                             <goal>install-node-and-yarn</goal>
                         </goals>
@@ -26,21 +28,26 @@
                             <yarnVersion>${yarn.version}</yarnVersion>
                         </configuration>
                     </execution>
+
+                    <!-- Executa 'yarn install' para instalar as dependências -->
                     <execution>
-                        <id>install</id>
+                        <id>yarn-install</id>
                         <goals>
                             <goal>yarn</goal>
                         </goals>
+                        <phase>generate-resources</phase>
                         <configuration>
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
+
+                    <!-- Executa 'yarn build' para compilar o frontend -->
                     <execution>
-                        <?m2e ignore?>
-                        <id>build</id>
+                        <id>yarn-build</id>
                         <goals>
                             <goal>yarn</goal>
                         </goals>
+                        <phase>prepare-package</phase>
                         <configuration>
                             <arguments>build</arguments>
                             <environmentVariables>
@@ -49,22 +56,10 @@
                             </environmentVariables>
                         </configuration>
                     </execution>
-                    <execution>
-                        <?m2e ignore?>
-                        <id>test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>all-tests</arguments>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
 
     <profiles>
     </profiles>

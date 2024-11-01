@@ -18,8 +18,8 @@
     </parent>
 
     <modules>
-        <module>backend</module>
         <module>frontend</module>
+        <module>backend</module>
     </modules>
 
     <properties>
@@ -53,15 +53,6 @@
                     <groupId>org.liquibase</groupId>
                     <artifactId>liquibase-maven-plugin</artifactId>
                     <version>4.27.0</version>
-                </plugin>
-
-                <!--TODO: AVALIAR MELHOR COMO FICA ESSA ESTRUTURA-->
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <configuration>
-                        <skip>true</skip>
-                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
