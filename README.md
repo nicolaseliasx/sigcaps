@@ -19,3 +19,6 @@ sigcaps/
 ├── frontend/
 │   └── pom.xml
 └── pom.xml (raiz)
+
+RUN APPLICATION
+mvn spring-boot:run -pl backend
