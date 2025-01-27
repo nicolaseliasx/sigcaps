@@ -1,7 +1,6 @@
 package br.ufsc.sigcaps.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -9,7 +8,7 @@ import br.ufsc.sigcaps.model.ConfigDto;
 import br.ufsc.sigcaps.model.InputDto;
 import br.ufsc.sigcaps.model.OutputDto;
 import br.ufsc.sigcaps.service.ApplicationService;
-import br.ufsc.sigcaps.utils.TokenService;
+import br.ufsc.sigcaps.service.TokenService;
 
 @Controller
 public class WebSocketController {
@@ -27,8 +26,8 @@ public class WebSocketController {
 	}
 
 	@MessageMapping("/userMessage")
-	public void handleUserMessage(InputDto message, @Header("Authorization") String token) {
-		tokenService.validateToken(token);
+	public void handleUserMessage(InputDto message) {
+		System.out.println("Mensagem recebida do cliente: " + message.getContent());
 		OutputDto msg = applicationService.userMessage(message);
 		messagingTemplate.convertAndSend("/topic/frontendMessages", msg);
 	}

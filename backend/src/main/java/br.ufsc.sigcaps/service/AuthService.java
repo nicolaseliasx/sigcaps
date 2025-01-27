@@ -2,7 +2,6 @@ package br.ufsc.sigcaps.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import br.ufsc.sigcaps.utils.TokenService;
 import io.jsonwebtoken.JwtException;
 
 @Service

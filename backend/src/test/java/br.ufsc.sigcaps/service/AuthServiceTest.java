@@ -9,7 +9,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import br.ufsc.sigcaps.utils.TokenService;
 import io.jsonwebtoken.JwtException;
 
 public class AuthServiceTest {

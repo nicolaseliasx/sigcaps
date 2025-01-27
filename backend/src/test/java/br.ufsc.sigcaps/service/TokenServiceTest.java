@@ -1,4 +1,4 @@
-package br.ufsc.sigcaps.utils;
+package br.ufsc.sigcaps.service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
