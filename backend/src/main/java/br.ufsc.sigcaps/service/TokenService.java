@@ -1,4 +1,4 @@
-package br.ufsc.sigcaps.utils;
+package br.ufsc.sigcaps.service;
 
 import java.security.Key;
 import java.util.Date;
