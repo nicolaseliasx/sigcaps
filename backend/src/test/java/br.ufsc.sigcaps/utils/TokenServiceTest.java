@@ -6,17 +6,26 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 
-public class TokenUtilTest {
+public class TokenServiceTest {
+
+	private TokenService tokenService;
+
+	@BeforeEach
+	void setup() {
+		tokenService = new TokenService();
+	}
+
 	@Test
 	void shouldGenerateValidToken() {
 		String subject = "test-user";
 		String role = "admin";
 
-		String token = TokenUtil.generateToken(subject, role);
+		String token = tokenService.generateToken(subject, role);
 
 		assertNotNull(token, "Generated token should not be null");
 		assertFalse(token.isEmpty(), "Generated token should not be empty");
@@ -26,9 +35,9 @@ public class TokenUtilTest {
 	void shouldValidateValidToken() {
 		String subject = "test-user";
 		String role = "admin";
-		String token = TokenUtil.generateToken(subject, role);
+		String token = tokenService.generateToken(subject, role);
 
-		assertDoesNotThrow(() -> TokenUtil.validateToken(token), "Valid token should not throw exceptions");
+		assertDoesNotThrow(() -> tokenService.validateToken(token), "Valid token should not throw exceptions");
 	}
 
 	@Test
@@ -37,7 +46,7 @@ public class TokenUtilTest {
 				"eyJzdWIiOiJ1c2VyMTIzIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjc1Mzc0NzE4fQ." + // Payload válido
 				"invalidsignature"; // Assinatura inválida
 
-		JwtException exception = assertThrows(JwtException.class, () -> TokenUtil.validateToken(invalidToken),
+		JwtException exception = assertThrows(JwtException.class, () -> tokenService.validateToken(invalidToken),
 				"Invalid token should throw JwtException");
 
 		assertTrue(exception.getMessage().contains("JWT signature does not match"),
@@ -49,17 +58,17 @@ public class TokenUtilTest {
 		String subject = "test-user";
 		String role = "admin";
 
-		String token = TokenUtil.generateToken(subject, role);
+		String token = tokenService.generateToken(subject, role);
 
 		String parsedSubject = Jwts.parserBuilder()
-				.setSigningKey(TokenUtil.KEY)
+				.setSigningKey(TokenService.KEY)
 				.build()
 				.parseClaimsJws(token)
 				.getBody()
 				.getSubject();
 
 		String parsedRole = Jwts.parserBuilder()
-				.setSigningKey(TokenUtil.KEY)
+				.setSigningKey(TokenService.KEY)
 				.build()
 				.parseClaimsJws(token)
 				.getBody()

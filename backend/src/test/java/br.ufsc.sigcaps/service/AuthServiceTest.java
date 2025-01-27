@@ -3,13 +3,13 @@ package br.ufsc.sigcaps.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import br.ufsc.sigcaps.utils.TokenUtil;
+import br.ufsc.sigcaps.utils.TokenService;
 import io.jsonwebtoken.JwtException;
 
 public class AuthServiceTest {
@@ -18,63 +18,59 @@ public class AuthServiceTest {
 
 	private AuthService authService;
 
+	private TokenService tokenService;
+
 	@BeforeEach
 	void setup() {
 		userService = mock();
-		authService = new AuthService(userService);
+		tokenService = mock();
+		authService = new AuthService(userService, tokenService);
 	}
 
 	@Test
 	void validateTokenOrThrow_withValidToken_doesNotThrowException() {
 		String validToken = "valid.token.here";
 
-		try (var mockedStatic = mockStatic(TokenUtil.class)) {
-			mockedStatic.when(() -> TokenUtil.validateToken(validToken)).thenAnswer(invocation -> null);
+		doNothing().when(tokenService).validateToken(validToken);
 
-			assertDoesNotThrow(() -> authService.validateTokenOrThrow(validToken));
-		}
+		assertDoesNotThrow(() -> authService.validateTokenOrThrow(validToken));
 	}
 
 	@Test
 	void validateTokenOrThrow_withInvalidToken_throwsIllegalArgumentException() {
 		String invalidToken = "invalid.token.here";
 
-		try (var mockedStatic = mockStatic(TokenUtil.class)) {
-			mockedStatic.when(() -> TokenUtil.validateToken(invalidToken))
-					.thenThrow(new JwtException("Invalid token"));
+		doThrow(new JwtException("Invalid token")).when(tokenService).validateToken(invalidToken);
 
-			IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-					() -> authService.validateTokenOrThrow(invalidToken));
-			assertEquals("Invalid token", exception.getMessage());
-		}
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+				() -> authService.validateTokenOrThrow(invalidToken));
+		assertEquals("Invalid token", exception.getMessage());
 	}
 
 	@Test
 	void generateToken_withValidSuperUserCredentials_returnsToken() {
 		String username = "superuser";
 		String password = "password123";
-		Map<String, String> credentials = Map.of("username", username, "password", password);
 
-		try (var mockedStatic = mockStatic(TokenUtil.class)) {
-			when(userService.validateSuperUser(username, password)).thenReturn(true);
-			mockedStatic.when(() -> TokenUtil.generateToken(username, "superuser"))
-					.thenReturn("generated.token");
+		String expected = "generated.token";
 
-			String token = authService.generateToken(credentials);
+		when(userService.validateSuperUser(username, password)).thenReturn(true);
 
-			assertEquals("generated.token", token);
-		}
+		when(tokenService.generateToken(username, "superuser")).thenReturn(expected);
+
+		String token = authService.generateToken(username, password);
+
+		assertEquals(expected, token);
 	}
 
 	@Test
 	void generateToken_withInvalidCredentials_returnsInvalidCredentialsMessage() {
 		String username = "wronguser";
 		String password = "wrongpassword";
-		Map<String, String> credentials = Map.of("username", username, "password", password);
 
 		when(userService.validateSuperUser(username, password)).thenReturn(false);
 
-		String result = authService.generateToken(credentials);
+		String result = authService.generateToken(username, password);
 
 		assertEquals("Invalid credentials", result);
 	}

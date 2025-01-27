@@ -1,23 +1,24 @@
 package br.ufsc.sigcaps.api;
 
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-
 import br.ufsc.sigcaps.model.ConfigDto;
 import br.ufsc.sigcaps.model.InputDto;
 import br.ufsc.sigcaps.model.OutputDto;
-import br.ufsc.sigcaps.utils.TokenUtil;
 import br.ufsc.sigcaps.service.ApplicationService;
+import br.ufsc.sigcaps.utils.TokenService;
 
 @Controller
 public class WebSocketController {
 
 	@Autowired
 	private ApplicationService applicationService;
+
+	@Autowired
+	private TokenService tokenService;
 
 	private final SimpMessagingTemplate messagingTemplate;
 
@@ -26,8 +27,8 @@ public class WebSocketController {
 	}
 
 	@MessageMapping("/userMessage")
-	public void handleUserMessage(InputDto message) {
-		TokenUtil.validateToken(message.getToken());
+	public void handleUserMessage(InputDto message, @Header("Authorization") String token) {
+		tokenService.validateToken(token);
 		OutputDto msg = applicationService.userMessage(message);
 		messagingTemplate.convertAndSend("/topic/frontendMessages", msg);
 	}
@@ -38,8 +39,8 @@ public class WebSocketController {
 	}
 
 	@MessageMapping("/requestToken")
-	public void handleTokenRequest(@Payload Map<String, String> credentials) {
-		String msg = applicationService.tokenRequest(credentials);
+	public void handleTokenRequest(String username, String password) {
+		String msg = applicationService.tokenRequest(username, password);
 		messagingTemplate.convertAndSend("/queue/tokenResponse", msg);
 	}
 }

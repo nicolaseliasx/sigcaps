@@ -19,8 +19,8 @@ public class ApplicationService {
 		return new OutputDto(message.getContent());
 	}
 
-	public String tokenRequest(@Payload Map<String, String> credentials) {
-		return authService.generateToken(credentials);
+	public String tokenRequest(String username, String password) {
+		return authService.generateToken(username, password);
 	}
 
 	public void configureAplication(ConfigDto configMessage) {
