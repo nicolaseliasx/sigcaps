@@ -1,12 +1,10 @@
 package br.ufsc.sigcaps.service;
 
-import java.util.Map;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import br.ufsc.sigcaps.model.ChamadaPacienteDto;
 import br.ufsc.sigcaps.model.ConfigDto;
-import br.ufsc.sigcaps.model.InputDto;
-import br.ufsc.sigcaps.model.OutputDto;
 
 @Service
 public class ApplicationService {
@@ -14,9 +12,10 @@ public class ApplicationService {
 	@Autowired
 	private AuthService authService;
 
-	public OutputDto userMessage(InputDto message) {
-		// add logica de chamar parte de audio
-		return new OutputDto(message.getContent());
+	public ChamadaPacienteDto userMessage(ChamadaPacienteDto dto) {
+		// Salvar no banco de historico antes de devolver pro front
+		dto.setHorario(LocalDateTime.now().toString());
+		return dto;
 	}
 
 	public String tokenRequest(String username, String password) {
