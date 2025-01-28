@@ -27,7 +27,7 @@ export function PageContainer(props: PageContainerProps) {
   );
 }
 
-const createStyles = (theme: Theme) => ({
+export const createStyles = (theme: Theme) => ({
   container: {
     width: "100%",
     margin: "0 auto",
@@ -38,11 +38,10 @@ const createStyles = (theme: Theme) => ({
     width: "100%",
     maxWidth: "1600px",
   },
-  //Calc's para considerar cabeçalho e barra lateral
   fixed: {
     padding: 0,
     position: "fixed",
-    height: "calc(100% - 7.75rem)",
+    height: "100%",
     width: "100%",
 
     [theme.breakpoints.up("lg")]: {
