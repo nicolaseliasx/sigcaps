@@ -7,12 +7,16 @@ import { Client } from "@stomp/stompjs";
 import { tittleCase } from "../../utils/utils";
 import { ColorSquare } from "../../components/ColorSquare";
 import { idToRiscoClassificacao } from "./painel-utils";
+import { getCache, setCache } from "./useCache";
 
 export default function PainelChamadasView() {
   const fontSize = 2;
   const theme = useTheme();
 
-  const [chamadaPaciente, setChamadaPaciente] = useState<ChamadaPaciente>();
+  const savedChamadaPaciente = getCache<ChamadaPaciente>("chamadaPaciente");
+  const [chamadaPaciente, setChamadaPaciente] = useState<
+    ChamadaPaciente | undefined
+  >(savedChamadaPaciente || undefined);
 
   useEffect(() => {
     const socket = new SockJS("http://localhost:8081/ws/frontend");
@@ -27,6 +31,7 @@ export default function PainelChamadasView() {
         const receivedMessage: ChamadaPaciente = JSON.parse(message.body);
         console.log(receivedMessage);
         setChamadaPaciente(receivedMessage);
+        setCache("chamadaPaciente", receivedMessage);
       });
     };
 
