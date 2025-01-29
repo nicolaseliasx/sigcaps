@@ -1,4 +1,4 @@
-package br.ufsc.sigcaps.model;
+package br.ufsc.sigcaps.model.dto;
 
 import lombok.Data;
 

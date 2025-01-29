@@ -1,15 +1,17 @@
 package br.ufsc.sigcaps.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.JwtException;
 
 @Service
 @AllArgsConstructor
 public class AuthService {
-	// TODO(@NICOLAS): VERIFICAR COMO ISSO DEVE FICAR, A PARTE DOS @AUTOWIREDS
-	private final UserService userService;
-	private final TokenService tokenService;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private TokenService tokenService;
 
 	public void validateTokenOrThrow(String token) {
 		try {

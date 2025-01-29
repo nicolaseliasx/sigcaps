@@ -1,4 +1,4 @@
-export function capitalize(nome?: string): string {
+export function tittleCase(nome?: string): string {
   if (!nome) {
     return "";
   }

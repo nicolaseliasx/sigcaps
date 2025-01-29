@@ -3,8 +3,9 @@ package br.ufsc.sigcaps.service;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import br.ufsc.sigcaps.model.ChamadaPacienteDto;
-import br.ufsc.sigcaps.model.ConfigDto;
+import br.ufsc.sigcaps.model.document.HistoricoChamadosDocument;
+import br.ufsc.sigcaps.model.dto.ChamadaPacienteDto;
+import br.ufsc.sigcaps.model.dto.ConfigDto;
 
 @Service
 public class ApplicationService {
@@ -12,9 +13,16 @@ public class ApplicationService {
 	@Autowired
 	private AuthService authService;
 
-	public ChamadaPacienteDto userMessage(ChamadaPacienteDto dto) {
-		// Salvar no banco de historico antes de devolver pro front
-		dto.setHorario(LocalDateTime.now().toString());
+	@Autowired
+	private HistoricoChamadosService historicoService;
+
+	public ChamadaPacienteDto chamarPaciente(ChamadaPacienteDto dto) {
+		dto.setHorario(LocalDateTime.now());
+
+		this.saveHistorico(dto);
+
+		dto.setHistorico(historicoService.getUltimos10Registros().stream().map(document -> historicoService.convertToDto(document)).toList());
+
 		return dto;
 	}
 
@@ -29,4 +37,15 @@ public class ApplicationService {
 		// Setar todos os valores de config novos
 		// Salvar no banco
 	}
+
+	private void saveHistorico(ChamadaPacienteDto dto) {
+		HistoricoChamadosDocument historico = new HistoricoChamadosDocument();
+		historico.setNomePaciente(dto.getNomePaciente());
+		historico.setClassificacao(dto.getClassificacao());
+		historico.setTipoServico(dto.getTipoServico());
+		historico.setHorario(dto.getHorario());
+
+		historicoService.save(historico);
+	}
+
 }

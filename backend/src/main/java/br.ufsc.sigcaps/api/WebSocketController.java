@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import br.ufsc.sigcaps.model.ChamadaPacienteDto;
-import br.ufsc.sigcaps.model.ConfigDto;
+import br.ufsc.sigcaps.model.dto.ChamadaPacienteDto;
+import br.ufsc.sigcaps.model.dto.ConfigDto;
 import br.ufsc.sigcaps.service.ApplicationService;
 import br.ufsc.sigcaps.service.TokenService;
 
@@ -26,8 +26,8 @@ public class WebSocketController {
 
 	@MessageMapping("/userMessage")
 	public void handleUserMessage(ChamadaPacienteDto input) {
-		ChamadaPacienteDto dto = applicationService.userMessage(input);
-		messagingTemplate.convertAndSend("/topic/frontendMessages", dto);
+		ChamadaPacienteDto output = applicationService.chamarPaciente(input);
+		messagingTemplate.convertAndSend("/topic/frontendMessages", output);
 	}
 
 	@MessageMapping("/config")
