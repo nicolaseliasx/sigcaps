@@ -11,6 +11,5 @@ public class ChamadaPacienteDto {
 	private LocalDateTime horario;
 	private List<String> tipoServico;
 
-	// Melhor separar em dois objs input e output? ess parametor no input sempre sera null
 	private List<HistoricoChamadosDto> historico;
 }

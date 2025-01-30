@@ -1,8 +1,11 @@
 package br.ufsc.sigcaps.service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import br.ufsc.sigcaps.model.document.ConfigDocument;
 import br.ufsc.sigcaps.model.document.HistoricoChamadosDocument;
 import br.ufsc.sigcaps.model.dto.ChamadaPacienteDto;
 import br.ufsc.sigcaps.model.dto.ConfigDto;
@@ -16,6 +19,9 @@ public class ApplicationService {
 	@Autowired
 	private HistoricoChamadosService historicoService;
 
+	@Autowired
+	private ConfigService configService;
+
 	public ChamadaPacienteDto chamarPaciente(ChamadaPacienteDto dto) {
 		// Tentar usar clock pra conseguir testar
 		dto.setHorario(LocalDateTime.now());
@@ -27,16 +33,29 @@ public class ApplicationService {
 		return dto;
 	}
 
-	public String tokenRequest(String username, String password) {
-		return authService.generateToken(username, password);
+	public String generateToken(String username, String password, String addrs) {
+		String newToken = authService.generateToken(username, password);
+		if (Objects.equals(newToken, "Invalid credentials")) {
+			return "Invalid credentials";
+		}
+
+		configService.saveToken(addrs, newToken);
+
+		return newToken;
 	}
 
-	public void configureAplication(ConfigDto configMessage) {
-		// Lógica de configuração...
-		// Adicionar todos os campos configuraveis no Config Dto
-		// Dar um load na entidade atual de configuracao
-		// Setar todos os valores de config novos
-		// Salvar no banco
+	public void saveConfig(ConfigDto config) {
+		configService.save(configService.convertToDocument(config));
+	}
+
+	public ConfigDto loadConfig() {
+		Optional<ConfigDocument> optionalConfig = configService.load();
+		if (optionalConfig.isEmpty()) {
+			throw new RuntimeException("Config not found");
+		}
+		ConfigDocument config = optionalConfig.get();
+
+		return configService.convertToDto(config);
 	}
 
 	private void saveHistorico(ChamadaPacienteDto dto) {
