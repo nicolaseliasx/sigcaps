@@ -5,16 +5,25 @@ import { tittleCase } from "../../utils/utils";
 import { ColorSquare } from "../../components/ColorSquare";
 import { idToRiscoClassificacao } from "./painel-utils";
 import { useWebSocket } from "../../hooks/useWebSocket";
+import { useTextToSpeech } from "../../hooks/useTextToSpeech";
+import { useEffect } from "react";
 
 export default function PainelChamadasView() {
   const fontSize = 2;
   const theme = useTheme();
+  const { speak } = useTextToSpeech();
 
   const { chamadaPaciente } = useWebSocket(
     "http://localhost:8081/ws/frontend",
     "/topic/chamadaPaciente",
     "chamadaPaciente"
   );
+
+  useEffect(() => {
+    if (chamadaPaciente) {
+      speak(chamadaPaciente?.nomePaciente);
+    }
+  }, [chamadaPaciente, speak]);
 
   // TODO: Revisar se esse & fica legal
   const tipoServico = chamadaPaciente?.tipoServico?.join(" & ");
@@ -30,7 +39,10 @@ export default function PainelChamadasView() {
           }}
         >
           <HFlow alignItems="center">
-            <Text fontSize={fontSize * 3.6}>
+            <Text
+              fontSize={fontSize * 3.6}
+              onChange={() => speak(chamadaPaciente?.nomePaciente)}
+            >
               {tittleCase(chamadaPaciente?.nomePaciente)}
             </Text>
             <ColorSquare
@@ -51,7 +63,6 @@ export default function PainelChamadasView() {
           height: "0.1rem",
           backgroundColor: theme.pallete.gray.c70,
           margin: "2rem 0",
-          alignSelf: "stretch",
         }}
       />
       <VFlow>

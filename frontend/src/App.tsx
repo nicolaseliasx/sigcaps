@@ -7,7 +7,7 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar />
-      <div style={{ marginTop: "3rem" }}>
+      <div style={{ marginTop: "3rem", overflow: "hidden" }}>
         <Routes>
           <Route path="/" element={<PainelChamadasView />} />
           <Route path="/configuracoes" element={<ConfiguracoesView />} />
