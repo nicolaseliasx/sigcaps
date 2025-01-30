@@ -1,51 +1,59 @@
-import { HFlow, Button } from "bold-ui";
+import {
+  useTheme,
+  HFlow,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+  Button,
+} from "bold-ui";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Navbar() {
+export function Navbar() {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const [anchorRef, setAnchorRef] = useState<HTMLButtonElement | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleToggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const handleCloseMenu = () => setIsMenuOpen(false);
+
   return (
     <div
       style={{
-        backgroundColor: "#0051A2",
-        color: "#fff",
-        padding: "0.8rem 0.8rem",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
+        width: "100%",
+        backgroundColor: theme.pallete.primary.main,
+        padding: "0.2rem",
+        boxShadow: theme.shadows.outer[40],
         position: "fixed",
         top: 0,
-        width: "100%",
+        left: 0,
         zIndex: 1000,
-        boxShadow: "0 5rem 8rem rgba(0, 0, 0, 0.1)",
-        marginLeft: -12,
       }}
     >
-      <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: "bold" }}>
-        SIGCAPS
-      </h1>
+      <HFlow justifyContent="flex-end" style={{ marginRight: "2rem" }}>
+        <Button
+          innerRef={setAnchorRef}
+          onClick={handleToggleMenu}
+          skin="default"
+        >
+          ▼
+        </Button>
 
-      <HFlow hSpacing={2} style={{ marginRight: 30, textoColor: "#fff" }}>
-        <Button
-          kind="normal"
-          size="large"
-          skin="ghost"
-          style={{ color: "#fff", fontSize: "1.2rem" }}
-          onClick={() => navigate("/")}
+        <Dropdown
+          anchorRef={anchorRef}
+          open={isMenuOpen}
+          onClose={handleCloseMenu}
+          popperProps={{ placement: "bottom-end" }}
         >
-          Painel
-        </Button>
-        <Button
-          kind="normal"
-          size="large"
-          skin="ghost"
-          style={{ color: "#fff", fontSize: "1.2rem" }}
-          onClick={() => navigate("/configuracoes")}
-        >
-          Configurações
-        </Button>
+          <DropdownMenu>
+            <DropdownItem onClick={() => navigate("/")}>Painel</DropdownItem>
+            <DropdownItem onClick={() => navigate("/configuracoes")}>
+              Configurações
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       </HFlow>
     </div>
   );
 }
-
-export default Navbar;

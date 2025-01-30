@@ -27,7 +27,7 @@ export function PageContainer(props: PageContainerProps) {
   );
 }
 
-export const createStyles = (theme: Theme) => ({
+const createStyles = (theme: Theme) => ({
   container: {
     width: "100%",
     margin: "0 auto",

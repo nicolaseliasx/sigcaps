@@ -17,6 +17,7 @@ public class ApplicationService {
 	private HistoricoChamadosService historicoService;
 
 	public ChamadaPacienteDto chamarPaciente(ChamadaPacienteDto dto) {
+		// Tentar usar clock pra conseguir testar
 		dto.setHorario(LocalDateTime.now());
 
 		this.saveHistorico(dto);
