@@ -39,10 +39,7 @@ export default function PainelChamadasView() {
           }}
         >
           <HFlow alignItems="center">
-            <Text
-              fontSize={fontSize * 3.6}
-              onChange={() => speak(chamadaPaciente?.nomePaciente)}
-            >
+            <Text fontSize={fontSize * 3.6}>
               {tittleCase(chamadaPaciente?.nomePaciente)}
             </Text>
             <ColorSquare
