@@ -1,12 +1,21 @@
-import { VFlow, HeadingSection } from "bold-ui";
-import { PageContent } from "./components/layout/PageContent";
+import Navbar from "./components/Navbar";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import PainelChamadasView from "./view/painel/PainelChamadasView";
+import ConfiguracoesView from "./view/configuracoes/ConfiguracoesView";
 
 function App() {
   return (
-    <PageContent type="filled">
-      <HeadingSection level={1} title="SIGCAPS" />
-      <VFlow>testando...</VFlow>
-    </PageContent>
+    <BrowserRouter>
+      <div>
+        <Navbar />
+        <div style={{ marginTop: "3rem" }}>
+          <Routes>
+            <Route path="/" element={<PainelChamadasView />} />
+            <Route path="/configuracoes" element={<ConfiguracoesView />} />
+          </Routes>
+        </div>
+      </div>
+    </BrowserRouter>
   );
 }
 

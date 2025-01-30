@@ -38,6 +38,7 @@ const createStyles = (theme: Theme) => ({
   container: {
     padding: "1rem 0",
     flexGrow: 1,
+    marginTop: "2rem",
   },
   transparent: {
     backgroundColor: theme.pallete.surface.background,
