@@ -32,6 +32,7 @@ public class WebSocketController {
 
 	@MessageMapping("/config/save")
 	public void handleSaveConfig(ConfigDto config) {
+		//	Apos alterar as configuracoes esse metodo deve enviar as configuracoes novas pro topico "/topic/config/load"
 		applicationService.saveConfig(config);
 	}
 

@@ -13,7 +13,7 @@ import jakarta.annotation.PostConstruct;
 
 @Service
 public class ConfigService {
-	private static final Long UNIQUE_ID = 1L;
+	private static final String UNIQUE_ID = "1";
 
 	@Autowired
 	private ConfigRepository repository;
@@ -26,7 +26,7 @@ public class ConfigService {
 			configDefault.setId(UNIQUE_ID);
 			configDefault.setFontSize(2);
 			configDefault.setVoiceVolume(1);
-			configDefault.setServerAddrs(this.getServerIp());
+			configDefault.setServerAddrs(String.format("http://%s:8081", this.getServerIp()));
 
 			this.save(configDefault);
 		}
@@ -38,7 +38,7 @@ public class ConfigService {
 	}
 
 	public Optional<ConfigDocument> load() {
-		return repository.findById(String.valueOf(UNIQUE_ID));
+		return repository.findById(UNIQUE_ID);
 	}
 
 	public void saveToken(String addrs, String newToken) {

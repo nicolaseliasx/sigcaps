@@ -1,16 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { ChamadaPaciente } from "../view/painel/painel-model";
 import { getCache, setCache } from "./useCache";
 
-export function useWebSocket(url: string, topic: string, cacheKey: string) {
-  const [chamadaPaciente, setChamadaPaciente] =
-    useState<ChamadaPaciente | null>(
-      getCache<ChamadaPaciente>(cacheKey) || null
-    );
+/**
+ * Hook genérico para conexão WebSocket
+ * @param url Endereço do WebSocket
+ * @param topic Tópico para subscribe
+ * @param cacheKey Chave para armazenamento em cache
+ * @returns Objeto com dados recebidos do WebSocket
+ */
+export function useWebSocket<T>(url: string, topic: string, cacheKey: string) {
+  const [data, setData] = useState<T | null>(getCache<T>(cacheKey) || null);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const stompClientRef = useRef<Client | null>(null);
 
   useEffect(() => {
+    if (!url || !topic || !cacheKey) return;
     const stompClient = new Client({
       webSocketFactory: () => new SockJS(url),
       reconnectDelay: 5000,
@@ -20,20 +26,41 @@ export function useWebSocket(url: string, topic: string, cacheKey: string) {
     });
 
     stompClient.onConnect = () => {
+      setIsConnected(true);
       stompClient.subscribe(topic, (message) => {
-        console.log("Received message", message);
-        const receivedMessage: ChamadaPaciente = JSON.parse(message.body);
-        setChamadaPaciente(receivedMessage);
-        setCache(cacheKey, receivedMessage);
+        try {
+          console.log("Received message", message);
+
+          const receivedData: T = JSON.parse(message.body);
+
+          setData(receivedData);
+          setCache(cacheKey, receivedData);
+        } catch (error) {
+          console.error("Error parsing WebSocket message:", error);
+        }
       });
     };
 
     stompClient.activate();
+    stompClientRef.current = stompClient;
 
     return () => {
+      setIsConnected(false);
       stompClient.deactivate();
     };
   }, [url, topic, cacheKey]);
 
-  return { chamadaPaciente };
+  const sendMessage = (destination: string, body: object) => {
+    // problema aqui nao ta conectado
+    if (stompClientRef.current && stompClientRef.current.connected) {
+      stompClientRef.current.publish({
+        destination,
+        body: JSON.stringify(body),
+      });
+    } else {
+      console.warn("WebSocket is not connected, cannot send message.");
+    }
+  };
+
+  return { data, sendMessage, isConnected };
 }
