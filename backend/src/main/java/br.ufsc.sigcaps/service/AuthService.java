@@ -25,7 +25,7 @@ public class AuthService {
 		if (userService.validateSuperUser(username, password)) {
 			return tokenService.generateToken(username, "superuser");
 		} else {
-			return "Invalid credentials";
+			throw new IllegalArgumentException("Invalid credentials!");
 		}
 	}
 }

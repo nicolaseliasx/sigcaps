@@ -1,7 +1,6 @@
 package br.ufsc.sigcaps.service;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,13 +32,10 @@ public class ApplicationService {
 		return dto;
 	}
 
-	public String generateToken(String username, String password, String addrs) {
+	public String generateToken(String username, String password) {
 		String newToken = authService.generateToken(username, password);
-		if (Objects.equals(newToken, "Invalid credentials")) {
-			return "Invalid credentials";
-		}
 
-		configService.saveToken(addrs, newToken);
+		configService.saveToken(newToken);
 
 		return newToken;
 	}

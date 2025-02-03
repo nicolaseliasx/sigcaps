@@ -2,10 +2,12 @@ package br.ufsc.sigcaps.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import br.ufsc.sigcaps.model.dto.ChamadaPacienteDto;
 import br.ufsc.sigcaps.model.dto.ConfigDto;
+import br.ufsc.sigcaps.model.dto.CredentialsDto;
 import br.ufsc.sigcaps.service.ApplicationService;
 import br.ufsc.sigcaps.service.TokenService;
 
@@ -32,8 +34,8 @@ public class WebSocketController {
 
 	@MessageMapping("/config/save")
 	public void handleSaveConfig(ConfigDto config) {
-		//	Apos alterar as configuracoes esse metodo deve enviar as configuracoes novas pro topico "/topic/config/load"
 		applicationService.saveConfig(config);
+		messagingTemplate.convertAndSend("/topic/config/load", config);
 	}
 
 	@MessageMapping("/config/load")
@@ -43,8 +45,8 @@ public class WebSocketController {
 	}
 
 	@MessageMapping("/generateToken")
-	public void handleGenerateToken(String username, String password, String addrs) {
-		String msg = applicationService.generateToken(username, password, addrs);
-		messagingTemplate.convertAndSend("/queue/generateToken", msg);
+	public void handleGenerateToken(CredentialsDto credentials, SimpMessageHeaderAccessor headerAccessor) {
+		String sessionId = headerAccessor.getSessionId();
+		messagingTemplate.convertAndSendToUser(sessionId, "/queue/generateToken", "TESTANDOENVIODETOKEN");
 	}
 }

@@ -34,6 +34,7 @@ export const useTextToSpeech = () => {
 
   const speak = useCallback(
     (text: string, options: SpeechOptions = {}) => {
+      // console ta acusando erro aqui
       if (!synth || !voice) {
         console.error("Text-to-speech não suportado neste navegador");
         return;

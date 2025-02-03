@@ -19,20 +19,26 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
 	public Message<?> preSend(Message<?> message, MessageChannel channel) {
 		StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
-		if (accessor.getCommand() == StompCommand.CONNECT) {
-			String token = accessor.getFirstNativeHeader("Authorization");
-			if (token == null || token.isEmpty()) {
-				throw new IllegalArgumentException("Token não encontrado no cabeçalho Authorization!");
+		if (accessor.getCommand() == StompCommand.CONNECT || accessor.getCommand() == StompCommand.SUBSCRIBE) {
+			String destination = accessor.getDestination();
+
+			if ("/app/generateToken".equals(destination)) {
+				return message;
 			}
 
-			try {
-				// FALTANDO APENAS GERAR TOKEN PRA VALIDAR
-				//				tokenService.validateToken(token);
+			//			String token = accessor.getFirstNativeHeader("Authorization");
+			//			if (token == null || token.isEmpty()) {
+			//				throw new IllegalArgumentException("Token não encontrado no cabeçalho Authorization!");
+			//			}
 
-				accessor.getSessionAttributes().put("Authorization", token);
-			} catch (Exception e) {
-				throw new IllegalArgumentException("Token inválido!", e);
-			}
+			//			try {
+			//				// FALTANDO APENAS GERAR TOKEN PRA VALIDAR
+			//				//				tokenService.validateToken(token);
+			//
+			//				accessor.getSessionAttributes().put("Authorization", token);
+			//			} catch (Exception e) {
+			//				throw new IllegalArgumentException("Invalid credentials!");
+			//			}
 		}
 
 		return message;

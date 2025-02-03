@@ -1,6 +1,6 @@
 package br.ufsc.sigcaps.model.document;
 
-import java.util.Map;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -15,5 +15,5 @@ public class ConfigDocument {
 	private Integer fontSize;
 	private Integer voiceVolume;
 	private String serverAddrs;
-	private Map<String, String> tokens;
+	private List<String> tokens;
 }

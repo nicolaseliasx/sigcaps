@@ -69,8 +69,10 @@ public class AuthServiceTest {
 
 		when(userService.validateSuperUser(username, password)).thenReturn(false);
 
-		String result = authService.generateToken(username, password);
+		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+			authService.generateToken(username, password);
+		});
 
-		assertEquals("Invalid credentials", result);
+		assertEquals("Invalid credentials!", exception.getMessage());
 	}
 }

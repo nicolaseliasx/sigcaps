@@ -2,7 +2,7 @@ package br.ufsc.sigcaps.service;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,15 +21,22 @@ public class ConfigService {
 	@PostConstruct
 	private void loadDefaultConfigs() {
 		Optional<ConfigDocument> config = this.load();
+		String serverIp = String.format("http://%s:8081", this.getServerIp());
 		if (config.isEmpty()) {
 			ConfigDocument configDefault = new ConfigDocument();
 			configDefault.setId(UNIQUE_ID);
 			configDefault.setFontSize(2);
 			configDefault.setVoiceVolume(1);
-			configDefault.setServerAddrs(String.format("http://%s:8081", this.getServerIp()));
+			configDefault.setServerAddrs(serverIp);
 
 			this.save(configDefault);
+		} else {
+			ConfigDocument configLoad = config.get();
+			configLoad.setServerAddrs(serverIp);
+
+			this.save(configLoad);
 		}
+		System.out.println("IP do servidor: " + serverIp);
 	}
 
 	public void save(ConfigDocument newConfig) {
@@ -41,7 +48,7 @@ public class ConfigService {
 		return repository.findById(UNIQUE_ID);
 	}
 
-	public void saveToken(String addrs, String newToken) {
+	public void saveToken(String newToken) {
 		Optional<ConfigDocument> optionalConfig = this.load();
 
 		if (optionalConfig.isEmpty()) {
@@ -50,11 +57,11 @@ public class ConfigService {
 
 		ConfigDocument config = optionalConfig.get();
 
-		if (config.getTokens() == null) {
-			config.setTokens(new HashMap<>());
+		if (config.getTokens().isEmpty()) {
+			config.setTokens(new ArrayList<>());
 		}
 
-		config.getTokens().put(addrs, newToken);
+		config.getTokens().add(newToken);
 
 		this.save(config);
 	}

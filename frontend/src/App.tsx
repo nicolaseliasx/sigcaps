@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import PainelChamadasView from "./view/painel/PainelChamadasView";
-import ConfiguracoesView from "./view/configuracoes/ConfiguracoesView";
+import { ConfiguracoesView } from "./view/configuracoes/ConfiguracoesView";
 import { Navbar } from "./components/Navbar";
 import { useEffect, useState } from "react";
 import { InitialConfigView } from "./view/configuracoes/InitialConfigView";
@@ -60,7 +60,10 @@ function App() {
                   <PainelChamadasView config={config ?? defaultConfig} />
                 }
               />
-              <Route path="/configuracoes" element={<ConfiguracoesView />} />
+              <Route
+                path="/configuracoes"
+                element={<ConfiguracoesView serverUrl={serverUrl} />}
+              />
               <Route path="*" element={<Navigate to="/" />} />
             </>
           )}
