@@ -11,9 +11,10 @@ export function useWebSocket<T>(
     cacheKey ? getCache<T>(cacheKey) : null
   );
   const [isConnected, setIsConnected] = useState(false);
+  const token = localStorage.getItem("authToken") || null;
 
   useEffect(() => {
-    if (!url || !topic || !cacheKey) return;
+    if (!url || !topic || !cacheKey || !token) return;
 
     const updateConnectionStatus = (connected: boolean) => {
       setIsConnected(connected);
@@ -39,7 +40,7 @@ export function useWebSocket<T>(
       cleanupSubscription();
       cleanupListener();
     };
-  }, [url, topic, cacheKey]);
+  }, [url, topic, cacheKey, token]);
 
   const sendMessage = (destination: string, body: object) => {
     webSocketManager.sendMessage(destination, body);
