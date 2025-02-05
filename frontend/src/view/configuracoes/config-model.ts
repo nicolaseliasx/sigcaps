@@ -1,10 +1,6 @@
 export interface Config {
+  nomeInstalacao: string;
   fontSize: number;
   voiceVolume: number;
   serverAddrs: string;
-  token?: string;
-}
-
-export interface Token {
-  token: string;
 }

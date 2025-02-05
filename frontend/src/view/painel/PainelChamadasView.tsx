@@ -20,9 +20,8 @@ export default function PainelChamadasView({
   const theme = useTheme();
   const { speak } = useTextToSpeech();
 
-  // TODO: Verificar se isso ta triggando sem parar
   const { data: chamadaPaciente } = useWebSocket<ChamadaPaciente>(
-    `${serverAddrs}/ws/frontend`,
+    `${serverAddrs}/ws`,
     "/topic/chamadaPaciente",
     "chamadaPaciente"
   );

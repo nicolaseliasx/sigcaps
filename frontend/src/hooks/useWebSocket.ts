@@ -1,65 +1,48 @@
-import { useEffect, useRef, useState } from "react";
-import { Client } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
-import { getCache, setCache } from "./useCache";
+import { useEffect, useState } from "react";
+import { webSocketManager } from "./WebSocketManager";
+import { getCache } from "./useCache";
 
-/**
- * Hook genérico para conexão WebSocket
- * @param url Endereço do WebSocket
- * @param topic Tópico para subscribe
- * @param cacheKey Chave para armazenamento em cache
- * @returns Objeto com dados recebidos do WebSocket
- */
-export function useWebSocket<T>(url: string, topic: string, cacheKey: string) {
-  const [data, setData] = useState<T | null>(getCache<T>(cacheKey) || null);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-  const stompClientRef = useRef<Client | null>(null);
+export function useWebSocket<T>(
+  url?: string,
+  topic?: string,
+  cacheKey?: string
+) {
+  const [data, setData] = useState<T | null>(
+    cacheKey ? getCache<T>(cacheKey) : null
+  );
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     if (!url || !topic || !cacheKey) return;
-    const stompClient = new Client({
-      webSocketFactory: () => new SockJS(url),
-      reconnectDelay: 5000,
-      connectHeaders: {
-        Authorization: `Bearer tokennnn`, // TODO: Alterar para um token dinâmico
-      },
-    });
 
-    stompClient.onConnect = () => {
-      setIsConnected(true);
-      stompClient.subscribe(topic, (message) => {
-        try {
-          console.log("Received message", message);
-
-          const receivedData: T = JSON.parse(message.body);
-
-          setData(receivedData);
-          setCache(cacheKey, receivedData);
-        } catch (error) {
-          console.error("Error parsing WebSocket message:", error);
-        }
-      });
+    const updateConnectionStatus = (connected: boolean) => {
+      setIsConnected(connected);
     };
 
-    stompClient.activate();
-    stompClientRef.current = stompClient;
+    const cleanupListener = webSocketManager.registerConnectionListener(
+      updateConnectionStatus
+    );
+
+    webSocketManager.connect(url);
+
+    const updateData = (newData: T) => {
+      setData(newData);
+    };
+
+    const cleanupSubscription = webSocketManager.addSubscription<T>(
+      topic,
+      updateData,
+      cacheKey
+    );
 
     return () => {
-      setIsConnected(false);
-      stompClient.deactivate();
+      cleanupSubscription();
+      cleanupListener();
     };
   }, [url, topic, cacheKey]);
 
   const sendMessage = (destination: string, body: object) => {
-    // problema aqui nao ta conectado
-    if (stompClientRef.current && stompClientRef.current.connected) {
-      stompClientRef.current.publish({
-        destination,
-        body: JSON.stringify(body),
-      });
-    } else {
-      console.warn("WebSocket is not connected, cannot send message.");
-    }
+    webSocketManager.sendMessage(destination, body);
   };
 
   return { data, sendMessage, isConnected };

@@ -5,11 +5,16 @@ import {
   DropdownMenu,
   DropdownItem,
   Button,
+  Text,
 } from "bold-ui";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function Navbar() {
+interface NavbarProps {
+  nomeInstalacao: string;
+}
+
+export function Navbar({ nomeInstalacao }: NavbarProps) {
   const navigate = useNavigate();
   const theme = useTheme();
   const [anchorRef, setAnchorRef] = useState<HTMLButtonElement | null>(null);
@@ -32,6 +37,9 @@ export function Navbar() {
       }}
     >
       <HFlow justifyContent="flex-end" style={{ marginRight: "2rem" }}>
+        <Text style={{ color: "white" }} fontSize={2}>
+          {nomeInstalacao}
+        </Text>
         <Button
           innerRef={setAnchorRef}
           onClick={handleToggleMenu}

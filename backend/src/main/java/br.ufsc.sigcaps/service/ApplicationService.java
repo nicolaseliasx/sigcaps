@@ -32,14 +32,6 @@ public class ApplicationService {
 		return dto;
 	}
 
-	public String generateToken(String username, String password) {
-		String newToken = authService.generateToken(username, password);
-
-		configService.saveToken(newToken);
-
-		return newToken;
-	}
-
 	public void saveConfig(ConfigDto config) {
 		configService.save(configService.convertToDocument(config));
 	}

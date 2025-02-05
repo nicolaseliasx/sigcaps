@@ -8,7 +8,6 @@ import { useWebSocket } from "./hooks/useWebSocket";
 import { Config } from "./view/configuracoes/config-model";
 
 function App() {
-  // TODO: Alterar isso para um hook useCache
   const [serverUrl, setServerUrl] = useState(
     localStorage.getItem("serverUrl") || ""
   );
@@ -18,31 +17,29 @@ function App() {
     sendMessage,
     isConnected,
   } = useWebSocket<Config>(
-    `${serverUrl}/ws/frontend`,
+    `${serverUrl}/ws`,
     "/topic/config/load",
     "appConfig"
   );
 
-  // TODO: isso ta trigando sem parar
   useEffect(() => {
     if (isConnected && !config && serverUrl) {
-      console.log("Requesting config...");
       sendMessage("/app/config/load", {});
     }
   }, [isConnected, config, serverUrl, sendMessage]);
 
-  // TODO: Isso so existe pq config pode ser null como remover?
   const defaultConfig: Config = {
+    nomeInstalacao: "",
     fontSize: 2,
     serverAddrs: serverUrl,
     voiceVolume: 1,
   };
 
-  console.log(config);
-
   return (
     <BrowserRouter>
-      <Navbar />
+      <Navbar
+        nomeInstalacao={config?.nomeInstalacao ?? defaultConfig.nomeInstalacao}
+      />
       <div style={{ marginTop: "3rem", overflow: "hidden" }}>
         <Routes>
           {!serverUrl && !config ? (

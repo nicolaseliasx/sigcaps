@@ -2,7 +2,6 @@ package br.ufsc.sigcaps.service;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,24 +47,6 @@ public class ConfigService {
 		return repository.findById(UNIQUE_ID);
 	}
 
-	public void saveToken(String newToken) {
-		Optional<ConfigDocument> optionalConfig = this.load();
-
-		if (optionalConfig.isEmpty()) {
-			throw new RuntimeException("Config not found");
-		}
-
-		ConfigDocument config = optionalConfig.get();
-
-		if (config.getTokens().isEmpty()) {
-			config.setTokens(new ArrayList<>());
-		}
-
-		config.getTokens().add(newToken);
-
-		this.save(config);
-	}
-
 	private String getServerIp() {
 		try {
 			return InetAddress.getLocalHost().getHostAddress();
@@ -81,6 +62,7 @@ public class ConfigService {
 		document.setFontSize(dto.getFontSize());
 		document.setVoiceVolume(dto.getVoiceVolume());
 		document.setServerAddrs(dto.getServerAddrs());
+		document.setNomeInstalacao(dto.getNomeInstalacao());
 		return document;
 	}
 
