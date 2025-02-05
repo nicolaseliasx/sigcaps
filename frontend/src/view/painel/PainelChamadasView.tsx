@@ -32,8 +32,7 @@ export default function PainelChamadasView({
     }
   }, [chamadaPaciente, voiceVolume, speak]);
 
-  // TODO: Revisar se esse & fica legal
-  const tipoServico = chamadaPaciente?.tipoServico?.join(" & ");
+  const tipoServico = chamadaPaciente?.tipoServico?.join(" e ");
 
   return chamadaPaciente ? (
     <>
