@@ -14,7 +14,7 @@ class WebSocketManager {
   private isConnected: boolean = false;
   private connectionListeners: Set<(connected: boolean) => void> = new Set();
 
-  private token = getCache<string>("authToken") || "";
+  private token = localStorage.getItem("authToken") || "";
 
   private constructor() {}
 
