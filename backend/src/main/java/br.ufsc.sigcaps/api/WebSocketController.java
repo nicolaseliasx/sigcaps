@@ -24,10 +24,10 @@ public class WebSocketController {
 		this.messagingTemplate = messagingTemplate;
 	}
 
-	@MessageMapping("/userMessage")
-	public void handleUserMessage(ChamadaPacienteDto input) {
+	@MessageMapping("/chamadaPaciente")
+	public void handleChamadaPaciente(ChamadaPacienteDto input) {
 		ChamadaPacienteDto output = applicationService.chamarPaciente(input);
-		messagingTemplate.convertAndSend("/topic/frontendMessages", output);
+		messagingTemplate.convertAndSend("/topic/chamadaPaciente", output);
 	}
 
 	@MessageMapping("/config")
