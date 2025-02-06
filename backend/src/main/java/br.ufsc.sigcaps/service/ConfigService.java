@@ -12,7 +12,7 @@ import jakarta.annotation.PostConstruct;
 
 @Service
 public class ConfigService {
-	private static final Long UNIQUE_ID = 1L;
+	private static final String UNIQUE_ID = "1";
 
 	@Autowired
 	private ConfigRepository repository;
