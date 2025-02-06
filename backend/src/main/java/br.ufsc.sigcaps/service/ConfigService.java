@@ -12,7 +12,7 @@ import jakarta.annotation.PostConstruct;
 
 @Service
 public class ConfigService {
-	private static final String UNIQUE_ID = "1";
+	private static final Long UNIQUE_ID = 1L;
 
 	@Autowired
 	private ConfigRepository repository;
@@ -44,7 +44,7 @@ public class ConfigService {
 	}
 
 	public Optional<ConfigDocument> load() {
-		return repository.findById(UNIQUE_ID);
+		return repository.findById(String.valueOf(UNIQUE_ID));
 	}
 
 	private String getServerIp() {

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export function getCache<T>(key: string): T | null {
   try {
     const item = localStorage.getItem(key);
@@ -5,6 +6,12 @@ export function getCache<T>(key: string): T | null {
   } catch (error) {
     console.error("Error getting cache:", error);
     return null;
+=======
+export const getCache = <T>(key: string): T | undefined => {
+  const cachedData = localStorage.getItem(key);
+  if (cachedData) {
+    return JSON.parse(cachedData);
+>>>>>>> bff3aacf4c48cebcae0db6edee6d441224785e95
   }
 }
 
