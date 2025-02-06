@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface NavbarProps {
-  nomeInstalacao: string;
+  nomeInstalacao?: string;
 }
 
 export function Navbar({ nomeInstalacao }: NavbarProps) {

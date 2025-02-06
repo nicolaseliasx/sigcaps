@@ -1,6 +1,6 @@
 import { VFlow, Text, useTheme, HFlow, Grid, Cell } from "bold-ui";
 import { PageContent } from "../../components/layout/PageContent";
-import { painelColorRecord } from "./painel-model";
+import { ChamadaPaciente, painelColorRecord } from "./painel-model";
 import { tittleCase } from "../../utils/utils";
 import { ColorSquare } from "../../components/ColorSquare";
 import { idToRiscoClassificacao } from "./painel-utils";
@@ -8,13 +8,19 @@ import { useWebSocket } from "../../hooks/useWebSocket";
 import { useTextToSpeech } from "../../hooks/useTextToSpeech";
 import { useEffect } from "react";
 
-export default function PainelChamadasView() {
+interface PainelChamadasViewProps {
+  serverUrl: string;
+}
+
+export default function PainelChamadasView({
+  serverUrl,
+}: PainelChamadasViewProps) {
   const fontSize = 2;
   const theme = useTheme();
   const { speak } = useTextToSpeech();
 
   const { data: chamadaPaciente } = useWebSocket<ChamadaPaciente>(
-    `${serverAddrs}/ws`,
+    `${serverUrl}/ws`,
     "/topic/chamadaPaciente",
     "chamadaPaciente"
   );

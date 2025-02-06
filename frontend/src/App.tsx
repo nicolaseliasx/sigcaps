@@ -1,10 +1,13 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import PainelChamadasView from "./view/painel/PainelChamadasView";
 import { ConfiguracoesView } from "./view/configuracoes/ConfiguracoesView";
 import { Navbar } from "./components/Navbar";
+import { Config } from "./view/configuracoes/config-model";
+import { useWebSocket } from "./hooks/useWebSocket";
+import { useEffect, useState } from "react";
+import { InitialConfigView } from "./view/configuracoes/InitialConfigView";
 
 function App() {
-<<<<<<< HEAD
   const [serverUrl, setServerUrl] = useState(
     localStorage.getItem("serverUrl") || ""
   );
@@ -26,23 +29,11 @@ function App() {
     }
   }, [isConnected, config, serverUrl, sendMessage]);
 
-  const defaultConfig: Config = {
-    nomeInstalacao: "",
-    fontSize: 2,
-    serverAddrs: serverUrl,
-    voiceVolume: 1,
-  };
-
-=======
->>>>>>> bff3aacf4c48cebcae0db6edee6d441224785e95
   return (
     <BrowserRouter>
-      <Navbar
-        nomeInstalacao={config?.nomeInstalacao ?? defaultConfig.nomeInstalacao}
-      />
+      <Navbar nomeInstalacao={config?.nomeInstalacao} />
       <div style={{ marginTop: "3rem", overflow: "hidden" }}>
         <Routes>
-<<<<<<< HEAD
           {!serverUrl && !config ? (
             <>
               <Route
@@ -54,9 +45,7 @@ function App() {
             <>
               <Route
                 path="/"
-                element={
-                  <PainelChamadasView config={config ?? defaultConfig} />
-                }
+                element={<PainelChamadasView serverUrl={serverUrl} />}
               />
               <Route
                 path="/configuracoes"
@@ -65,10 +54,6 @@ function App() {
               <Route path="*" element={<Navigate to="/" />} />
             </>
           )}
-=======
-          <Route path="/" element={<PainelChamadasView />} />
-          <Route path="/configuracoes" element={<ConfiguracoesView />} />
->>>>>>> bff3aacf4c48cebcae0db6edee6d441224785e95
         </Routes>
       </div>
     </BrowserRouter>
