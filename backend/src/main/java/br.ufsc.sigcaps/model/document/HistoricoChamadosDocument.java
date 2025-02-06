@@ -11,7 +11,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @Document(collection = "historico")
 public class HistoricoChamadosDocument {
-
 	@Id
 	private String id;
 	private String nomePaciente;

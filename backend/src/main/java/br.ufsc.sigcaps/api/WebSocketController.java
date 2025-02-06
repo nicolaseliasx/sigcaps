@@ -30,14 +30,20 @@ public class WebSocketController {
 		messagingTemplate.convertAndSend("/topic/chamadaPaciente", output);
 	}
 
-	@MessageMapping("/config")
-	public void handleConfigureAplication(ConfigDto configMessage) {
-		applicationService.configureAplication(configMessage);
+	@MessageMapping("/config/save")
+	public void handleSaveConfig(ConfigDto config) {
+		applicationService.saveConfig(config);
 	}
 
-	@MessageMapping("/requestToken")
-	public void handleTokenRequest(String username, String password) {
-		String msg = applicationService.tokenRequest(username, password);
-		messagingTemplate.convertAndSend("/queue/tokenResponse", msg);
+	@MessageMapping("/config/load")
+	public void handleLoadConfig() {
+		ConfigDto output = applicationService.loadConfig();
+		messagingTemplate.convertAndSend("/topic/config/load", output);
+	}
+
+	@MessageMapping("/generateToken")
+	public void handleGenerateToken(String username, String password, String addrs) {
+		String msg = applicationService.generateToken(username, password, addrs);
+		messagingTemplate.convertAndSend("/queue/generateToken", msg);
 	}
 }
