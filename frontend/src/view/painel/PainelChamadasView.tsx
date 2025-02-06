@@ -13,8 +13,8 @@ export default function PainelChamadasView() {
   const theme = useTheme();
   const { speak } = useTextToSpeech();
 
-  const { chamadaPaciente } = useWebSocket(
-    "http://localhost:8081/ws/frontend",
+  const { data: chamadaPaciente } = useWebSocket<ChamadaPaciente>(
+    `${serverAddrs}/ws`,
     "/topic/chamadaPaciente",
     "chamadaPaciente"
   );
@@ -25,8 +25,7 @@ export default function PainelChamadasView() {
     }
   }, [chamadaPaciente, speak]);
 
-  // TODO: Revisar se esse & fica legal
-  const tipoServico = chamadaPaciente?.tipoServico?.join(" & ");
+  const tipoServico = chamadaPaciente?.tipoServico?.join(" e ");
 
   return chamadaPaciente ? (
     <>

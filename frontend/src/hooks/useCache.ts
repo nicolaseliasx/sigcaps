@@ -1,15 +1,24 @@
+<<<<<<< HEAD
+export function getCache<T>(key: string): T | null {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : null;
+  } catch (error) {
+    console.error("Error getting cache:", error);
+    return null;
+=======
 export const getCache = <T>(key: string): T | undefined => {
   const cachedData = localStorage.getItem(key);
   if (cachedData) {
     return JSON.parse(cachedData);
+>>>>>>> bff3aacf4c48cebcae0db6edee6d441224785e95
   }
-  return undefined;
-};
+}
 
-export const setCache = <T>(key: string, data: T): void => {
-  localStorage.setItem(key, JSON.stringify(data));
-};
-
-export const clearCache = (key: string): void => {
-  localStorage.removeItem(key);
-};
+export function setCache<T>(key: string, value: T): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error("Error setting cache:", error);
+  }
+}

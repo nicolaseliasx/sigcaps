@@ -2,7 +2,6 @@ package br.ufsc.sigcaps.service;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,15 +20,22 @@ public class ConfigService {
 	@PostConstruct
 	private void loadDefaultConfigs() {
 		Optional<ConfigDocument> config = this.load();
+		String serverIp = String.format("http://%s:8081", this.getServerIp());
 		if (config.isEmpty()) {
 			ConfigDocument configDefault = new ConfigDocument();
 			configDefault.setId(UNIQUE_ID);
 			configDefault.setFontSize(2);
 			configDefault.setVoiceVolume(1);
-			configDefault.setServerAddrs(this.getServerIp());
+			configDefault.setServerAddrs(serverIp);
 
 			this.save(configDefault);
+		} else {
+			ConfigDocument configLoad = config.get();
+			configLoad.setServerAddrs(serverIp);
+
+			this.save(configLoad);
 		}
+		System.out.println("IP do servidor: " + serverIp);
 	}
 
 	public void save(ConfigDocument newConfig) {
@@ -39,24 +45,6 @@ public class ConfigService {
 
 	public Optional<ConfigDocument> load() {
 		return repository.findById(String.valueOf(UNIQUE_ID));
-	}
-
-	public void saveToken(String addrs, String newToken) {
-		Optional<ConfigDocument> optionalConfig = this.load();
-
-		if (optionalConfig.isEmpty()) {
-			throw new RuntimeException("Config not found");
-		}
-
-		ConfigDocument config = optionalConfig.get();
-
-		if (config.getTokens() == null) {
-			config.setTokens(new HashMap<>());
-		}
-
-		config.getTokens().put(addrs, newToken);
-
-		this.save(config);
 	}
 
 	private String getServerIp() {
@@ -74,6 +62,7 @@ public class ConfigService {
 		document.setFontSize(dto.getFontSize());
 		document.setVoiceVolume(dto.getVoiceVolume());
 		document.setServerAddrs(dto.getServerAddrs());
+		document.setNomeInstalacao(dto.getNomeInstalacao());
 		return document;
 	}
 

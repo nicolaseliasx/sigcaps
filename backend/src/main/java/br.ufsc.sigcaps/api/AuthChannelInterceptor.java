@@ -26,10 +26,7 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
 			}
 
 			try {
-				// FALTANDO APENAS GERAR TOKEN PRA VALIDAR
-				//				tokenService.validateToken(token);
-
-				accessor.getSessionAttributes().put("Authorization", token);
+				tokenService.validateToken(token);
 			} catch (Exception e) {
 				throw new IllegalArgumentException("Token inválido!", e);
 			}
