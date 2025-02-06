@@ -4,7 +4,6 @@ import { ConfiguracoesView } from "./view/configuracoes/ConfiguracoesView";
 import { Navbar } from "./components/Navbar";
 
 function App() {
-<<<<<<< HEAD
   const [serverUrl, setServerUrl] = useState(
     localStorage.getItem("serverUrl") || ""
   );
@@ -32,8 +31,6 @@ function App() {
     voiceVolume: 1,
   };
 
-=======
->>>>>>> bff3aacf4c48cebcae0db6edee6d441224785e95
   return (
     <BrowserRouter>
       <Navbar
@@ -41,7 +38,6 @@ function App() {
       />
       <div style={{ marginTop: "3rem", overflow: "hidden" }}>
         <Routes>
-<<<<<<< HEAD
           {!serverUrl && !config ? (
             <>
               <Route
@@ -64,10 +60,6 @@ function App() {
               <Route path="*" element={<Navigate to="/" />} />
             </>
           )}
-=======
-          <Route path="/" element={<PainelChamadasView />} />
-          <Route path="/configuracoes" element={<ConfiguracoesView />} />
->>>>>>> bff3aacf4c48cebcae0db6edee6d441224785e95
         </Routes>
       </div>
     </BrowserRouter>
