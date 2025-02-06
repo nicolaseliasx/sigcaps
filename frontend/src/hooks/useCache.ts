@@ -1,3 +1,4 @@
+// TODO: Refatorar ese cache para um hook useCache melhor
 export const getCache = <T>(key: string): T | undefined => {
   const cachedData = localStorage.getItem(key);
   if (cachedData) {
