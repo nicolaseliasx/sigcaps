@@ -8,8 +8,10 @@ import {
   Button,
   Tag,
 } from "bold-ui";
-import { Box } from "./layout/Box";
+import { Box } from "../../../components/layout/Box";
 import { useState } from "react";
+import { useAlert } from "../../../hooks/useAlert";
+import { urlValidator } from "../config-validator";
 
 interface TokenGeneratorProps {
   serverUrl: string;
@@ -18,10 +20,21 @@ interface TokenGeneratorProps {
 export function TokenGenerator({ serverUrl }: TokenGeneratorProps) {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
+  const [credentialsError, setCredentialsError] = useState("");
   const [token, setToken] = useState(localStorage.getItem("authToken"));
+
+  const [urlErros, setUrlErros] = useState("");
+
+  const { alert, AlertRenderer } = useAlert();
 
   const handleGenerateToken = async () => {
     if (!user || !password) {
+      return;
+    }
+
+    const hasUrlError = urlValidator(serverUrl);
+    if (hasUrlError) {
+      setUrlErros(hasUrlError);
       return;
     }
 
@@ -42,22 +55,32 @@ export function TokenGenerator({ serverUrl }: TokenGeneratorProps) {
       if (response.ok) {
         localStorage.setItem("authToken", data.token);
         setToken(data.token);
+        alert("success", "Token gerado com sucesso");
       } else {
-        alert(data.mensagem || "Erro ao autenticar");
+        setCredentialsError("Usuario ou senha inválidos");
+        alert("danger", "Credenciais inválidas");
       }
     } catch (error) {
       console.error("Erro ao gerar token:", error);
+      alert("danger", "Erro ao gerar token");
     }
   };
 
   return (
     <VFlow>
-      <Text fontSize={1.2} fontWeight="bold">
-        Configurações token{" "}
-        <Tooltip text="Um token de autenticação é uma credencial gerada pelo servidor para identificar e autorizar usuários em requisições.">
-          <Icon icon="infoCircleFilled" size={1} />
-        </Tooltip>
-      </Text>
+      <HFlow>
+        <Text fontSize={1.2} fontWeight="bold">
+          Configurações token{" "}
+          <Tooltip text="Um token de autenticação é uma credencial gerada pelo servidor para identificar e autorizar usuários em requisições.">
+            <Icon icon="infoCircleFilled" size={1} />
+          </Tooltip>
+        </Text>
+        {urlErros && (
+          <Tag type="danger">
+            <Text color="inherit">{urlErros}</Text>
+          </Tag>
+        )}
+      </HFlow>
       <HFlow hSpacing={2}>
         <VFlow>
           <Text fontSize={1} fontWeight="bold">
@@ -68,6 +91,7 @@ export function TokenGenerator({ serverUrl }: TokenGeneratorProps) {
             value={user}
             onChange={(e) => setUser(e.target.value)}
             clearable={false}
+            error={credentialsError}
           />
         </VFlow>
         <VFlow>
@@ -79,6 +103,7 @@ export function TokenGenerator({ serverUrl }: TokenGeneratorProps) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             clearable={false}
+            type="password"
           />
         </VFlow>
         <Box>
@@ -102,10 +127,11 @@ export function TokenGenerator({ serverUrl }: TokenGeneratorProps) {
         size="small"
         kind="primary"
         onClick={handleGenerateToken}
-        disabled={user === "" || password === "" || token !== null}
+        disabled={user === "" || password === ""}
       >
         Gerar token
       </Button>
+      <AlertRenderer />
     </VFlow>
   );
 }

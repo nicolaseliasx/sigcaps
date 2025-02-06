@@ -24,6 +24,7 @@ function App() {
 
   useEffect(() => {
     if (isConnected && !config && serverUrl) {
+      console.log("Requesting config");
       sendMessage("/app/config/load", {});
     }
   }, [isConnected, config, serverUrl, sendMessage]);

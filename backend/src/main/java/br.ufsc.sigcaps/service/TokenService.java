@@ -14,12 +14,12 @@ public class TokenService {
 	protected static final Key KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
 	public String generateToken(String subject, String role) {
-		int duration = 3600000;
 		return Jwts.builder()
 				.setSubject(subject)
 				.claim("role", role)
 				.setIssuedAt(new Date())
-				.setExpiration(new Date(System.currentTimeMillis() + duration))
+				// TODO: Token nunca vai expirar no mvp
+				//.setExpiration(new Date(System.currentTimeMillis() + duration))
 				.signWith(KEY, SignatureAlgorithm.HS256)
 				.compact();
 	}

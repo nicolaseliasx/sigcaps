@@ -68,6 +68,7 @@ public class ConfigService {
 
 	public ConfigDto convertToDto(ConfigDocument document) {
 		ConfigDto dto = new ConfigDto();
+		dto.setNomeInstalacao(document.getNomeInstalacao());
 		dto.setFontSize(document.getFontSize());
 		dto.setVoiceVolume(document.getVoiceVolume());
 		dto.setServerAddrs(document.getServerAddrs());
