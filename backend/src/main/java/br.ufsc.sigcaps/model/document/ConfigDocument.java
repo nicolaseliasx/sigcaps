@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "config")
 public class ConfigDocument {
 	@Id
-	private String id;
+	private Long id;
 	private Integer fontSize;
 	private Integer voiceVolume;
 	private String serverAddrs;

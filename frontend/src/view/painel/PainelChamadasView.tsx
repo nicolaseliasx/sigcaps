@@ -1,37 +1,29 @@
 import { VFlow, Text, useTheme, HFlow, Grid, Cell } from "bold-ui";
 import { PageContent } from "../../components/layout/PageContent";
-import { ChamadaPaciente, painelColorRecord } from "./painel-model";
+import { painelColorRecord } from "./painel-model";
 import { tittleCase } from "../../utils/utils";
 import { ColorSquare } from "../../components/ColorSquare";
 import { idToRiscoClassificacao } from "./painel-utils";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { useTextToSpeech } from "../../hooks/useTextToSpeech";
 import { useEffect } from "react";
-import { Config } from "../configuracoes/config-model";
 
-interface PainelChamadasViewProps {
-  config: Config;
-}
-
-export default function PainelChamadasView({
-  config,
-}: PainelChamadasViewProps) {
-  const { fontSize, serverAddrs, voiceVolume } = config;
+export default function PainelChamadasView() {
+  const fontSize = 2;
   const theme = useTheme();
   const { speak } = useTextToSpeech();
 
-  // TODO: Verificar se isso ta triggando sem parar
-  const { data: chamadaPaciente } = useWebSocket<ChamadaPaciente>(
-    `${serverAddrs}/ws/frontend`,
+  const { chamadaPaciente } = useWebSocket(
+    "http://localhost:8081/ws/frontend",
     "/topic/chamadaPaciente",
     "chamadaPaciente"
   );
 
   useEffect(() => {
     if (chamadaPaciente) {
-      speak(chamadaPaciente?.nomePaciente, { volume: voiceVolume });
+      speak(chamadaPaciente?.nomePaciente);
     }
-  }, [chamadaPaciente, voiceVolume, speak]);
+  }, [chamadaPaciente, speak]);
 
   // TODO: Revisar se esse & fica legal
   const tipoServico = chamadaPaciente?.tipoServico?.join(" & ");
