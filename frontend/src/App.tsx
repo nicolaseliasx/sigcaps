@@ -1,7 +1,11 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import PainelChamadasView from "./view/painel/PainelChamadasView";
 import { ConfiguracoesView } from "./view/configuracoes/ConfiguracoesView";
 import { Navbar } from "./components/Navbar";
+import { Config } from "./view/configuracoes/config-model";
+import { useWebSocket } from "./hooks/useWebSocket";
+import { useEffect, useState } from "react";
+import { InitialConfigView } from "./view/configuracoes/InitialConfigView";
 
 function App() {
   const [serverUrl, setServerUrl] = useState(
@@ -24,18 +28,9 @@ function App() {
     }
   }, [isConnected, config, serverUrl, sendMessage]);
 
-  const defaultConfig: Config = {
-    nomeInstalacao: "",
-    fontSize: 2,
-    serverAddrs: serverUrl,
-    voiceVolume: 1,
-  };
-
   return (
     <BrowserRouter>
-      <Navbar
-        nomeInstalacao={config?.nomeInstalacao ?? defaultConfig.nomeInstalacao}
-      />
+      <Navbar nomeInstalacao={config?.nomeInstalacao} />
       <div style={{ marginTop: "3rem", overflow: "hidden" }}>
         <Routes>
           {!serverUrl && !config ? (
@@ -49,9 +44,7 @@ function App() {
             <>
               <Route
                 path="/"
-                element={
-                  <PainelChamadasView config={config ?? defaultConfig} />
-                }
+                element={<PainelChamadasView serverUrl={serverUrl} />}
               />
               <Route
                 path="/configuracoes"
