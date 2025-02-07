@@ -66,6 +66,8 @@ export function TokenGenerator({
         if (setHasToken) setHasToken(data.token);
         setCredentialsError("");
         alert("success", "Token gerado com sucesso");
+        setUser("");
+        setPassword("");
       } else {
         setCredentialsError("Usuario ou senha inválidos");
         alert("danger", "Credenciais inválidas");
