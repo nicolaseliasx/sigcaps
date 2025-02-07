@@ -5,7 +5,7 @@ export interface ValidationErrors {
 export const urlValidator = (url: string) => {
   return !url.trim()
     ? "URL do servidor é obrigatória."
-    : !/^https?:\/\/.+/.test(url)
+    : !/^http:\/\/(?:\d{1,3}\.){3}\d{1,3}(:\d{1,5})?$/.test(url)
     ? "URL inválida."
     : "";
 };

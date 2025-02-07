@@ -7,15 +7,12 @@ import { idToRiscoClassificacao } from "./painel-utils";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { useTextToSpeech } from "../../hooks/useTextToSpeech";
 import { useEffect } from "react";
+import { useConfig } from "../../provider/useConfig";
 
-interface PainelChamadasViewProps {
-  serverUrl: string;
-}
+export default function PainelChamadasView() {
+  const { config, serverUrl } = useConfig();
 
-export default function PainelChamadasView({
-  serverUrl,
-}: PainelChamadasViewProps) {
-  const fontSize = 2;
+  const fontSize = config?.fontSize || 1;
   const theme = useTheme();
   const { speak } = useTextToSpeech();
 
@@ -27,9 +24,9 @@ export default function PainelChamadasView({
 
   useEffect(() => {
     if (chamadaPaciente) {
-      speak(chamadaPaciente?.nomePaciente);
+      speak(chamadaPaciente?.nomePaciente, { volume: config?.voiceVolume });
     }
-  }, [chamadaPaciente, speak]);
+  }, [chamadaPaciente, config?.voiceVolume, speak]);
 
   const tipoServico = chamadaPaciente?.tipoServico?.join(" e ");
 

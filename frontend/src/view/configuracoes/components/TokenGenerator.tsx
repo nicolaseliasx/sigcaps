@@ -15,9 +15,13 @@ import { urlValidator } from "../config-validator";
 
 interface TokenGeneratorProps {
   serverUrl: string;
+  setHasToken?: (has: boolean) => void;
 }
 
-export function TokenGenerator({ serverUrl }: TokenGeneratorProps) {
+export function TokenGenerator({
+  serverUrl,
+  setHasToken,
+}: TokenGeneratorProps) {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [credentialsError, setCredentialsError] = useState("");
@@ -36,6 +40,8 @@ export function TokenGenerator({ serverUrl }: TokenGeneratorProps) {
     if (hasUrlError) {
       setUrlErros(hasUrlError);
       return;
+    } else {
+      setUrlErros("");
     }
 
     try {
@@ -55,6 +61,8 @@ export function TokenGenerator({ serverUrl }: TokenGeneratorProps) {
       if (response.ok) {
         localStorage.setItem("authToken", data.token);
         setToken(data.token);
+        if (setHasToken) setHasToken(data.token);
+        setCredentialsError("");
         alert("success", "Token gerado com sucesso");
       } else {
         setCredentialsError("Usuario ou senha inválidos");
@@ -104,6 +112,7 @@ export function TokenGenerator({ serverUrl }: TokenGeneratorProps) {
             onChange={(e) => setPassword(e.target.value)}
             clearable={false}
             type="password"
+            error={credentialsError ? " " : undefined}
           />
         </VFlow>
         <Box>
@@ -123,14 +132,22 @@ export function TokenGenerator({ serverUrl }: TokenGeneratorProps) {
           </HFlow>
         </Box>
       </HFlow>
-      <Button
-        size="small"
-        kind="primary"
-        onClick={handleGenerateToken}
-        disabled={user === "" || password === ""}
+      <Tooltip
+        text={
+          token !== null
+            ? "Já existe um token registrado. Não é necessário gerá-lo novamente."
+            : "Para gerar um token de autenticação, é necessário preencher os campos de usuário e senha."
+        }
       >
-        Gerar token
-      </Button>
+        <Button
+          size="small"
+          kind="primary"
+          onClick={handleGenerateToken}
+          disabled={user === "" || password === "" || token !== null}
+        >
+          Gerar token
+        </Button>
+      </Tooltip>
       <AlertRenderer />
     </VFlow>
   );

@@ -3,22 +3,15 @@ import { PageContent } from "../../components/layout/PageContent";
 import { Box } from "../../components/layout/Box";
 import { useState } from "react";
 import { Config } from "./config-model";
-import { useWebSocket } from "../../hooks/useWebSocket";
 import { getCache } from "../../hooks/useCache";
 import { TokenGenerator } from "./components/TokenGenerator";
 import { validateConfig, ValidationErrors } from "./config-validator";
 import { useAlert } from "../../hooks/useAlert";
+import { ServerUrlConfig } from "./components/ServerUrlConfig";
+import { useConfig } from "../../provider/useConfig";
 
-interface ConfiguracoesViewProps {
-  serverUrl: string;
-}
-
-export function ConfiguracoesView({ serverUrl }: ConfiguracoesViewProps) {
-  const { data: config } = useWebSocket<Config>(
-    `${serverUrl}/ws`,
-    "/topic/config/load",
-    "appConfig"
-  );
+export function ConfiguracoesView() {
+  const { config, setConfig, serverUrl } = useConfig();
 
   const appConfig = getCache<Config>("appConfig") || config;
   const [inputUrl, setInputUrl] = useState(appConfig?.serverAddrs || "");
@@ -32,8 +25,6 @@ export function ConfiguracoesView({ serverUrl }: ConfiguracoesViewProps) {
 
   const [errors, setErrors] = useState<ValidationErrors>({});
 
-  const { sendMessage } = useWebSocket();
-
   const handleSubmit = () => {
     const validationErrors = validateConfig({
       nomeInstalacao,
@@ -46,14 +37,40 @@ export function ConfiguracoesView({ serverUrl }: ConfiguracoesViewProps) {
       setErrors(validationErrors);
       return;
     }
-    sendMessage("/app/config/save", {
+
+    setConfig({
       nomeInstalacao: nomeInstalacao,
-      fontSize: inputFont,
+      fontSize: Number(inputFont),
+      voiceVolume: Number(inputVoice),
       serverAddrs: inputUrl,
-      voiceVolume: inputVoice,
     });
 
-    alert("success", "Configurações salvas com sucesso!");
+    handleSaveConfig(serverUrl, {
+      nomeInstalacao: nomeInstalacao,
+      fontSize: Number(inputFont),
+      voiceVolume: Number(inputVoice),
+      serverAddrs: inputUrl,
+    });
+  };
+
+  const handleSaveConfig = async (serverUrl: string, config: Config) => {
+    try {
+      const response = await fetch(`${serverUrl}/api/config`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(config),
+      });
+
+      if (response.ok) {
+        setErrors({});
+        alert("success", "Configurações salvas com sucesso!");
+      }
+    } catch (error) {
+      console.error("Erro ao salvar configurações:", error);
+      alert("danger", "Erro ao salvar configurações");
+    }
   };
 
   return (
@@ -82,20 +99,7 @@ export function ConfiguracoesView({ serverUrl }: ConfiguracoesViewProps) {
                   />
                 </VFlow>
               </Box>
-              <Box>
-                <VFlow>
-                  <Text fontSize={1.2} fontWeight="bold">
-                    URL do Servidor
-                  </Text>
-                  <TextField
-                    placeholder="Ex: http://127.0.0.1:8080"
-                    value={inputUrl}
-                    onChange={(e) => setInputUrl(e.target.value)}
-                    clearable={false}
-                    error={errors.inputUrl}
-                  />
-                </VFlow>
-              </Box>
+
               <Box>
                 <VFlow>
                   <Text fontSize={1.2} fontWeight="bold">
@@ -125,9 +129,18 @@ export function ConfiguracoesView({ serverUrl }: ConfiguracoesViewProps) {
                 </VFlow>
               </Box>
             </HFlow>
-            <Box style={{ marginTop: "2rem" }}>
-              <TokenGenerator serverUrl={serverUrl} />
-            </Box>
+            <VFlow>
+              <Box>
+                <ServerUrlConfig
+                  initialValue={inputUrl}
+                  onChange={setInputUrl}
+                />
+              </Box>
+              <Box>
+                <TokenGenerator serverUrl={serverUrl} />
+              </Box>
+            </VFlow>
+
             <Button onClick={handleSubmit}>Salvar</Button>
           </VFlow>
         </Box>

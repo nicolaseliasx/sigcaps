@@ -14,6 +14,7 @@ class WebSocketManager {
   private isConnected: boolean = false;
   private connectionListeners: Set<(connected: boolean) => void> = new Set();
 
+  // achar alternativa para esse token nunca enviar ""
   private token = localStorage.getItem("authToken") || "";
 
   private constructor() {}

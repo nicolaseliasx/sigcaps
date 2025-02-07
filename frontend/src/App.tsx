@@ -2,32 +2,12 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import PainelChamadasView from "./view/painel/PainelChamadasView";
 import { ConfiguracoesView } from "./view/configuracoes/ConfiguracoesView";
 import { Navbar } from "./components/Navbar";
-import { Config } from "./view/configuracoes/config-model";
-import { useWebSocket } from "./hooks/useWebSocket";
-import { useEffect, useState } from "react";
 import { InitialConfigView } from "./view/configuracoes/InitialConfigView";
+import { ConfigProvider } from "./provider/ConfigProvider";
+import { useConfig } from "./provider/useConfig";
 
-function App() {
-  const [serverUrl, setServerUrl] = useState(
-    localStorage.getItem("serverUrl") || ""
-  );
-
-  const {
-    data: config,
-    sendMessage,
-    isConnected,
-  } = useWebSocket<Config>(
-    `${serverUrl}/ws`,
-    "/topic/config/load",
-    "appConfig"
-  );
-
-  useEffect(() => {
-    if (isConnected && !config && serverUrl) {
-      console.log("Requesting config");
-      sendMessage("/app/config/load", {});
-    }
-  }, [isConnected, config, serverUrl, sendMessage]);
+function AppContent() {
+  const { config, serverUrl, setServerUrl } = useConfig();
 
   return (
     <BrowserRouter>
@@ -35,22 +15,14 @@ function App() {
       <div style={{ marginTop: "3rem", overflow: "hidden" }}>
         <Routes>
           {!serverUrl && !config ? (
-            <>
-              <Route
-                path="*"
-                element={<InitialConfigView setServerUrl={setServerUrl} />}
-              />
-            </>
+            <Route
+              path="*"
+              element={<InitialConfigView setServerUrl={setServerUrl} />}
+            />
           ) : (
             <>
-              <Route
-                path="/"
-                element={<PainelChamadasView serverUrl={serverUrl} />}
-              />
-              <Route
-                path="/configuracoes"
-                element={<ConfiguracoesView serverUrl={serverUrl} />}
-              />
+              <Route path="/" element={<PainelChamadasView />} />
+              <Route path="/configuracoes" element={<ConfiguracoesView />} />
               <Route path="*" element={<Navigate to="/" />} />
             </>
           )}
@@ -60,4 +32,10 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <ConfigProvider>
+      <AppContent />
+    </ConfigProvider>
+  );
+}
