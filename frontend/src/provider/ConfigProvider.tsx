@@ -8,6 +8,8 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     localStorage.getItem("serverUrl") || ""
   );
 
+  const [token, setToken] = useState(localStorage.getItem("authToken") || "");
+
   const { data: config } = useWebSocket<Config>(
     `${serverUrl}/ws`,
     "/topic/config/load",
@@ -29,6 +31,8 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
         setConfig: setAppConfig,
         serverUrl,
         setServerUrl,
+        token,
+        setToken,
       }}
     >
       {children}

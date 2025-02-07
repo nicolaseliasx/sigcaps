@@ -15,6 +15,6 @@ export const ColorSquare: React.FC<ColorSquareProps> = ({ color, size }) => {
         height: `${baseSize * size}rem`,
         backgroundColor: color,
       }}
-    ></div>
+    />
   );
 };

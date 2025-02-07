@@ -31,31 +31,29 @@ export default function PainelChamadasView() {
   const tipoServico = chamadaPaciente?.tipoServico?.join(" e ");
 
   return chamadaPaciente ? (
-    <>
-      <PageContent type="filled">
-        <VFlow
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <HFlow alignItems="center">
-            <Text fontSize={fontSize * 3.6}>
-              {tittleCase(chamadaPaciente?.nomePaciente)}
-            </Text>
-            <ColorSquare
-              color={
-                painelColorRecord[
-                  idToRiscoClassificacao(chamadaPaciente.classificacao)
-                ]
-              }
-              size={fontSize * 0.08}
-            />
-          </HFlow>
-          <Text fontSize={fontSize * 2}>{tittleCase(tipoServico)}</Text>
-        </VFlow>
-      </PageContent>
+    <PageContent type="filled">
+      <VFlow
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <HFlow alignItems="center">
+          <Text fontSize={fontSize * 3.6}>
+            {tittleCase(chamadaPaciente?.nomePaciente)}
+          </Text>
+          <ColorSquare
+            color={
+              painelColorRecord[
+                idToRiscoClassificacao(chamadaPaciente.classificacao)
+              ]
+            }
+            size={fontSize * 0.08}
+          />
+        </HFlow>
+        <Text fontSize={fontSize * 2}>{tittleCase(tipoServico)}</Text>
+      </VFlow>
       <div
         style={{
           width: "100vw",
@@ -68,7 +66,6 @@ export default function PainelChamadasView() {
         <Text fontSize={fontSize * 2} fontWeight="bold">
           Historico de chamadas
         </Text>
-        {/* deve ficar tudo em um page container */}
         {chamadaPaciente?.historico.map((historico, index) => (
           <Grid tabIndex={index}>
             <Cell size={1}>
@@ -99,7 +96,7 @@ export default function PainelChamadasView() {
           </Grid>
         ))}
       </VFlow>
-    </>
+    </PageContent>
   ) : (
     <PageContent type="filled" style={{ marginTop: "25rem" }}>
       <VFlow

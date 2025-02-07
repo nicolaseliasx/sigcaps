@@ -11,7 +11,7 @@ import { ServerUrlConfig } from "./components/ServerUrlConfig";
 import { useConfig } from "../../provider/useConfig";
 
 export function ConfiguracoesView() {
-  const { config, setConfig, serverUrl } = useConfig();
+  const { config, setConfig, serverUrl, token } = useConfig();
 
   const appConfig = getCache<Config>("appConfig") || config;
   const [inputUrl, setInputUrl] = useState(appConfig?.serverAddrs || "");
@@ -59,6 +59,7 @@ export function ConfiguracoesView() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(config),
       });
@@ -74,78 +75,71 @@ export function ConfiguracoesView() {
   };
 
   return (
-    <>
-      <PageContent type="filled">
-        <Text fontSize={1.5} fontWeight="bold">
-          Configurações da instalação
-        </Text>
+    <PageContent type="filled" fluid>
+      <Text fontSize={1.5} fontWeight="bold">
+        Configurações da instalação
+      </Text>
 
-        <Box style={{ marginTop: "1rem" }}>
-          <VFlow>
-            <HFlow
-              style={{ justifyContent: "space-between", marginTop: "1rem" }}
-            >
-              <Box>
-                <VFlow>
-                  <Text fontSize={1.2} fontWeight="bold">
-                    Nome da Instalação
-                  </Text>
-                  <TextField
-                    placeholder="Ex: Unidade Saude 1"
-                    value={nomeInstalacao}
-                    onChange={(e) => setNomeInstalacao(e.target.value)}
-                    clearable={false}
-                    error={errors.nomeInstalacao}
-                  />
-                </VFlow>
-              </Box>
-
-              <Box>
-                <VFlow>
-                  <Text fontSize={1.2} fontWeight="bold">
-                    Tamanho da fonte
-                  </Text>
-                  <TextField
-                    placeholder="1 a 100"
-                    value={inputFont}
-                    onChange={(e) => setInputFont(e.target.value)}
-                    clearable={false}
-                    error={errors.inputFont}
-                  />
-                </VFlow>
-              </Box>
-              <Box>
-                <VFlow>
-                  <Text fontSize={1.2} fontWeight="bold">
-                    Volume do leitor de voz
-                  </Text>
-                  <TextField
-                    placeholder="1 a 100"
-                    value={inputVoice}
-                    onChange={(e) => setInputVoice(e.target.value)}
-                    clearable={false}
-                    error={errors.inputVoice}
-                  />
-                </VFlow>
-              </Box>
-            </HFlow>
-            <VFlow>
-              <Box>
-                <ServerUrlConfig
-                  initialValue={inputUrl}
-                  onChange={setInputUrl}
+      <Box style={{ marginTop: "1rem" }}>
+        <VFlow>
+          <HFlow style={{ justifyContent: "space-between", marginTop: "1rem" }}>
+            <Box>
+              <VFlow>
+                <Text fontSize={1.2} fontWeight="bold">
+                  Nome da Instalação
+                </Text>
+                <TextField
+                  placeholder="Ex: Unidade Saude 1"
+                  value={nomeInstalacao}
+                  onChange={(e) => setNomeInstalacao(e.target.value)}
+                  clearable={false}
+                  error={errors.nomeInstalacao}
                 />
-              </Box>
-              <Box>
-                <TokenGenerator serverUrl={serverUrl} />
-              </Box>
-            </VFlow>
+              </VFlow>
+            </Box>
 
-            <Button onClick={handleSubmit}>Salvar</Button>
+            <Box>
+              <VFlow>
+                <Text fontSize={1.2} fontWeight="bold">
+                  Tamanho da fonte
+                </Text>
+                <TextField
+                  placeholder="1 a 100"
+                  value={inputFont}
+                  onChange={(e) => setInputFont(e.target.value)}
+                  clearable={false}
+                  error={errors.inputFont}
+                />
+              </VFlow>
+            </Box>
+            <Box>
+              <VFlow>
+                <Text fontSize={1.2} fontWeight="bold">
+                  Volume do leitor de voz
+                </Text>
+                <TextField
+                  placeholder="1 a 100"
+                  value={inputVoice}
+                  onChange={(e) => setInputVoice(e.target.value)}
+                  clearable={false}
+                  error={errors.inputVoice}
+                />
+              </VFlow>
+            </Box>
+          </HFlow>
+          <VFlow>
+            <Box>
+              <ServerUrlConfig initialValue={inputUrl} onChange={setInputUrl} />
+            </Box>
+            <Box>
+              <TokenGenerator serverUrl={serverUrl} />
+            </Box>
           </VFlow>
-        </Box>
-        <AlertRenderer />
-      </PageContent>
-    </>
+
+          <Button onClick={handleSubmit}>Salvar</Button>
+        </VFlow>
+      </Box>
+      <AlertRenderer />
+    </PageContent>
   );
 }

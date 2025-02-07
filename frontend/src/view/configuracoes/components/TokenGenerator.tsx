@@ -12,6 +12,7 @@ import { Box } from "../../../components/layout/Box";
 import { useState } from "react";
 import { useAlert } from "../../../hooks/useAlert";
 import { urlValidator } from "../config-validator";
+import { useConfig } from "../../../provider/useConfig";
 
 interface TokenGeneratorProps {
   serverUrl: string;
@@ -22,10 +23,10 @@ export function TokenGenerator({
   serverUrl,
   setHasToken,
 }: TokenGeneratorProps) {
+  const { token, setToken } = useConfig();
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [credentialsError, setCredentialsError] = useState("");
-  const [token, setToken] = useState(localStorage.getItem("authToken"));
 
   const [urlErros, setUrlErros] = useState("");
 
@@ -49,6 +50,7 @@ export function TokenGenerator({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           username: user,

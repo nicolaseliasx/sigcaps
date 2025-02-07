@@ -8,6 +8,7 @@ interface SpeechOptions {
 
 export const useTextToSpeech = () => {
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null);
+  const [isVoiceReady, setIsVoiceReady] = useState<boolean>(false);
 
   const synth = window.speechSynthesis;
 
@@ -18,6 +19,7 @@ export const useTextToSpeech = () => {
         const selectedVoice =
           availableVoices.find((voice) => voice.lang === "pt-BR") || null;
         setVoice(selectedVoice || availableVoices[0]);
+        setIsVoiceReady(true);
       };
 
       if (synth.getVoices().length > 0) {
@@ -34,7 +36,10 @@ export const useTextToSpeech = () => {
 
   const speak = useCallback(
     (text: string, options: SpeechOptions = {}) => {
-      // console ta acusando erro aqui
+      if (!isVoiceReady) {
+        return;
+      }
+
       if (!synth || !voice) {
         console.error("Text-to-speech não suportado neste navegador");
         return;
@@ -50,7 +55,7 @@ export const useTextToSpeech = () => {
 
       synth.speak(utterance);
     },
-    [synth, voice]
+    [isVoiceReady, synth, voice]
   );
 
   return { speak };

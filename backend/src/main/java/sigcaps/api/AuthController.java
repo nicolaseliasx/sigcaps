@@ -2,6 +2,7 @@ package sigcaps.api;
 
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,10 +28,7 @@ public class AuthController {
 					"token", token
 			));
 		} catch (IllegalArgumentException e) {
-			return ResponseEntity.status(401).body(Map.of(
-					"status", "erro",
-					"mensagem", "Credenciais inválidas"
-			));
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
 		}
 
 	}

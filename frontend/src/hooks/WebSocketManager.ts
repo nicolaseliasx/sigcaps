@@ -14,9 +14,6 @@ class WebSocketManager {
   private isConnected: boolean = false;
   private connectionListeners: Set<(connected: boolean) => void> = new Set();
 
-  // achar alternativa para esse token nunca enviar ""
-  private token = localStorage.getItem("authToken") || "";
-
   private constructor() {}
 
   public static getInstance(): WebSocketManager {
@@ -24,6 +21,10 @@ class WebSocketManager {
       WebSocketManager.instance = new WebSocketManager();
     }
     return WebSocketManager.instance;
+  }
+
+  private getToken() {
+    return localStorage.getItem("authToken") || "";
   }
 
   private notifyConnectionStatus() {
@@ -44,7 +45,7 @@ class WebSocketManager {
       webSocketFactory: () => new SockJS(url),
       reconnectDelay: 5000,
       connectHeaders: {
-        Authorization: this.token,
+        Authorization: `Bearer ${this.getToken()}`,
       },
     });
 

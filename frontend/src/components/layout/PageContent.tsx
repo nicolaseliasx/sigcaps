@@ -10,20 +10,18 @@ export interface PageContentProps {
   containerStyle?: Interpolation;
   children: React.ReactNode;
   fluid: boolean;
-  fixed: boolean;
   loading?: boolean;
 }
 
 export const PageContent = (props: PageContentProps) => {
-  const { style, type, children, fluid, fixed, loading, containerStyle } =
-    props;
+  const { style, type, children, fluid, loading, containerStyle } = props;
   const { classes, css } = useStyles(createStyles, props);
 
   return (
     <div
       className={css(classes.container, classes[type ?? "transparent"], style)}
     >
-      <PageContainer fluid={fluid} fixed={fixed} style={containerStyle}>
+      <PageContainer fluid={fluid} style={containerStyle}>
         {!loading && children}
       </PageContainer>
     </div>
