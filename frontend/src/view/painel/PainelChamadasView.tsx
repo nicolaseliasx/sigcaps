@@ -7,15 +7,12 @@ import { idToRiscoClassificacao } from "./painel-utils";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { useTextToSpeech } from "../../hooks/useTextToSpeech";
 import { useEffect } from "react";
+import { useConfig } from "../../provider/useConfig";
 
-interface PainelChamadasViewProps {
-  serverUrl: string;
-}
+export default function PainelChamadasView() {
+  const { config, serverUrl } = useConfig();
 
-export default function PainelChamadasView({
-  serverUrl,
-}: PainelChamadasViewProps) {
-  const fontSize = 2;
+  const fontSize = config?.fontSize || 1;
   const theme = useTheme();
   const { speak } = useTextToSpeech();
 
@@ -27,38 +24,36 @@ export default function PainelChamadasView({
 
   useEffect(() => {
     if (chamadaPaciente) {
-      speak(chamadaPaciente?.nomePaciente);
+      speak(chamadaPaciente?.nomePaciente, { volume: config?.voiceVolume });
     }
-  }, [chamadaPaciente, speak]);
+  }, [chamadaPaciente, config?.voiceVolume, speak]);
 
   const tipoServico = chamadaPaciente?.tipoServico?.join(" e ");
 
   return chamadaPaciente ? (
-    <>
-      <PageContent type="filled">
-        <VFlow
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <HFlow alignItems="center">
-            <Text fontSize={fontSize * 3.6}>
-              {tittleCase(chamadaPaciente?.nomePaciente)}
-            </Text>
-            <ColorSquare
-              color={
-                painelColorRecord[
-                  idToRiscoClassificacao(chamadaPaciente.classificacao)
-                ]
-              }
-              size={fontSize * 0.08}
-            />
-          </HFlow>
-          <Text fontSize={fontSize * 2}>{tittleCase(tipoServico)}</Text>
-        </VFlow>
-      </PageContent>
+    <PageContent type="filled">
+      <VFlow
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <HFlow alignItems="center">
+          <Text fontSize={fontSize * 3.6}>
+            {tittleCase(chamadaPaciente?.nomePaciente)}
+          </Text>
+          <ColorSquare
+            color={
+              painelColorRecord[
+                idToRiscoClassificacao(chamadaPaciente.classificacao)
+              ]
+            }
+            size={fontSize * 0.08}
+          />
+        </HFlow>
+        <Text fontSize={fontSize * 2}>{tittleCase(tipoServico)}</Text>
+      </VFlow>
       <div
         style={{
           width: "100vw",
@@ -71,7 +66,6 @@ export default function PainelChamadasView({
         <Text fontSize={fontSize * 2} fontWeight="bold">
           Historico de chamadas
         </Text>
-        {/* deve ficar tudo em um page container */}
         {chamadaPaciente?.historico.map((historico, index) => (
           <Grid tabIndex={index}>
             <Cell size={1}>
@@ -102,7 +96,7 @@ export default function PainelChamadasView({
           </Grid>
         ))}
       </VFlow>
-    </>
+    </PageContent>
   ) : (
     <PageContent type="filled" style={{ marginTop: "25rem" }}>
       <VFlow
