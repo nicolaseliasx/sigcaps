@@ -1,49 +1,24 @@
 import { useEffect, useState } from "react";
 import { webSocketManager } from "./WebSocketManager";
-import { getCache } from "./useCache";
 
 export function useWebSocket<T>(
-  url?: string,
-  topic?: string,
+  serverUrl: string,
+  topic: string,
   cacheKey?: string
 ) {
-  const [data, setData] = useState<T | null>(
-    cacheKey ? getCache<T>(cacheKey) : null
-  );
-  const [isConnected, setIsConnected] = useState(false);
+  const [data, setData] = useState<T | null>(null);
 
   useEffect(() => {
-    if (!url || !topic || !cacheKey) return;
+    if (!serverUrl || !topic) return;
 
-    const updateConnectionStatus = (connected: boolean) => {
-      setIsConnected(connected);
-    };
-
-    const cleanupListener = webSocketManager.registerConnectionListener(
-      updateConnectionStatus
-    );
-
-    webSocketManager.connect(url);
-
-    const updateData = (newData: T) => {
-      setData(newData);
-    };
-
-    const cleanupSubscription = webSocketManager.addSubscription<T>(
-      topic,
-      updateData,
-      cacheKey
-    );
+    webSocketManager.connect(serverUrl);
+    const unsubscribe = webSocketManager.subscribe<T>(topic, setData, cacheKey);
 
     return () => {
-      cleanupSubscription();
-      cleanupListener();
+      unsubscribe();
+      setData(null);
     };
-  }, [url, topic, cacheKey]);
+  }, [topic, cacheKey, serverUrl]);
 
-  const sendMessage = (destination: string, body: object) => {
-    webSocketManager.sendMessage(destination, body);
-  };
-
-  return { data, sendMessage, isConnected };
+  return { data };
 }
