@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Setter
 @Document(collection = "config")
-public class ConfigDocument {
+public class Config {
 	@Id
 	private String id;
 	private String nomeInstalacao;

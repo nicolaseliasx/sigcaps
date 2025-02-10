@@ -52,7 +52,7 @@ export function InitialConfigView({ setServerUrl }: InitialConfigViewProps) {
   };
 
   return (
-    <PageContent type="filled">
+    <PageContent type="filled" fluid>
       <VFlow>
         <Text fontSize={1.5} fontWeight="bold">
           Configuração inicial da instalação

@@ -30,6 +30,11 @@ export function ServerUrlConfig({
 
   const handleTestConnection = async () => {
     try {
+      if (inputUrl == "") {
+        setUrlErrors("URL do servidor não pode ser vazia.");
+        alert("danger", "URL do servidor não pode ser vazia.");
+        return;
+      }
       const response = await fetch(`${inputUrl}/api/health/status`, {
         method: "GET",
       });

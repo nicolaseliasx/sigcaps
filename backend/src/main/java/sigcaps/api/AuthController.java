@@ -28,7 +28,10 @@ public class AuthController {
 					"token", token
 			));
 		} catch (IllegalArgumentException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+					"status", "erro",
+					"message", "Credenciais inválidas"
+			));
 		}
 
 	}

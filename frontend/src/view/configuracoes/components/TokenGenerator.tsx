@@ -60,6 +60,8 @@ export function TokenGenerator({
 
       const data = await response.json();
 
+      console.log("data", data);
+
       if (response.ok) {
         localStorage.setItem("authToken", data.token);
         setToken(data.token);
@@ -73,6 +75,7 @@ export function TokenGenerator({
         alert("danger", "Credenciais inválidas");
       }
     } catch (error) {
+      console.log("Erro ao gerar chave:", error);
       console.error("Erro ao gerar chave:", error);
       alert("danger", "Erro ao gerar chave");
     }
@@ -147,7 +150,7 @@ export function TokenGenerator({
           size="small"
           kind="primary"
           onClick={handleGenerateToken}
-          disabled={user === "" || password === "" || token !== null}
+          disabled={user === "" || password === "" || token !== ""}
         >
           Gerar chave
         </Button>
