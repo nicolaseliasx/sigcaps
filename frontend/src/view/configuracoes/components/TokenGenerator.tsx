@@ -65,7 +65,7 @@ export function TokenGenerator({
         setToken(data.token);
         if (setHasToken) setHasToken(data.token);
         setCredentialsError("");
-        alert("success", "Token gerado com sucesso");
+        alert("success", "Chave gerado com sucesso");
         setUser("");
         setPassword("");
       } else {
@@ -73,8 +73,8 @@ export function TokenGenerator({
         alert("danger", "Credenciais inválidas");
       }
     } catch (error) {
-      console.error("Erro ao gerar token:", error);
-      alert("danger", "Erro ao gerar token");
+      console.error("Erro ao gerar chave:", error);
+      alert("danger", "Erro ao gerar chave");
     }
   };
 
@@ -82,8 +82,8 @@ export function TokenGenerator({
     <VFlow>
       <HFlow>
         <Text fontSize={1.2} fontWeight="bold">
-          Configurações token{" "}
-          <Tooltip text="Um token de autenticação é uma credencial gerada pelo servidor para identificar e autorizar usuários em requisições.">
+          Configurações autenticação{" "}
+          <Tooltip text="Uma chave de autenticação é uma credencial gerada pelo servidor para identificar e autorizar usuários em requisições.">
             <Icon icon="infoCircleFilled" size={1} />
           </Tooltip>
         </Text>
@@ -122,15 +122,15 @@ export function TokenGenerator({
         <Box>
           <HFlow>
             <Text fontSize={1.2} fontWeight="bold">
-              Status do token:
+              Status da chave:
             </Text>
             {token ? (
               <Tag type="success" icon="checkCircleFilled">
-                <Text color="inherit">Token registrado</Text>
+                <Text color="inherit">Chave registrada</Text>
               </Tag>
             ) : (
               <Tag icon="banFilled">
-                <Text color="inherit">Token não registrado</Text>
+                <Text color="inherit">Chave não registrada</Text>
               </Tag>
             )}
           </HFlow>
@@ -149,7 +149,7 @@ export function TokenGenerator({
           onClick={handleGenerateToken}
           disabled={user === "" || password === "" || token !== null}
         >
-          Gerar token
+          Gerar chave
         </Button>
       </Tooltip>
       <AlertRenderer />

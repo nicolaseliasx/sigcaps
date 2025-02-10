@@ -9,6 +9,7 @@ import {
 } from "bold-ui";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useConfig } from "../provider/useConfig";
 
 interface NavbarProps {
   nomeInstalacao?: string;
@@ -17,6 +18,9 @@ interface NavbarProps {
 export function Navbar({ nomeInstalacao }: NavbarProps) {
   const navigate = useNavigate();
   const theme = useTheme();
+  const { config } = useConfig();
+  const fontSize = config?.fontSize ?? 1;
+
   const [anchorRef, setAnchorRef] = useState<HTMLButtonElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -28,7 +32,7 @@ export function Navbar({ nomeInstalacao }: NavbarProps) {
       style={{
         width: "100%",
         backgroundColor: theme.pallete.primary.main,
-        padding: "0.2rem",
+        padding: "0.3rem",
         boxShadow: theme.shadows.outer[40],
         position: "fixed",
         top: 0,
@@ -37,15 +41,11 @@ export function Navbar({ nomeInstalacao }: NavbarProps) {
       }}
     >
       <HFlow justifyContent="flex-end" style={{ marginRight: "2rem" }}>
-        <Text style={{ color: "white" }} fontSize={2}>
+        <Text style={{ color: "white" }} fontSize={fontSize * 1.5}>
           {nomeInstalacao}
         </Text>
-        <Button
-          innerRef={setAnchorRef}
-          onClick={handleToggleMenu}
-          skin="default"
-        >
-          ▼
+        <Button innerRef={setAnchorRef} onClick={handleToggleMenu} skin="ghost">
+          <Text style={{ color: "white" }}>▼</Text>
         </Button>
 
         <Dropdown

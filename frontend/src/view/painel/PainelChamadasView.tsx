@@ -11,8 +11,7 @@ import { useConfig } from "../../provider/useConfig";
 
 export default function PainelChamadasView() {
   const { config, serverUrl } = useConfig();
-
-  const fontSize = config?.fontSize || 1;
+  const fontSize = config?.fontSize ?? 1;
   const theme = useTheme();
   const { speak } = useTextToSpeech();
 
