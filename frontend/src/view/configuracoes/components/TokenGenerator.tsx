@@ -107,6 +107,7 @@ export function TokenGenerator({
             onChange={(e) => setUser(e.target.value)}
             clearable={false}
             error={credentialsError}
+            disabled={token !== ""}
           />
         </VFlow>
         <VFlow>
@@ -120,6 +121,7 @@ export function TokenGenerator({
             clearable={false}
             type="password"
             error={credentialsError ? " " : undefined}
+            disabled={token !== ""}
           />
         </VFlow>
         <Box>
