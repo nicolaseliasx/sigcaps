@@ -24,7 +24,7 @@ export const useAlert = () => {
 
   const AlertRenderer: React.FC = () =>
     createPortal(
-      <div style={{ position: "fixed", top: 80, right: 30, zIndex: 999 }}>
+      <div style={{ position: "fixed", top: 85, right: 30, zIndex: 2000 }}>
         {alerts.map((alert) => (
           <Alert key={alert.id} type={alert.type}>
             {alert.message}

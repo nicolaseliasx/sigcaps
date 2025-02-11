@@ -2,13 +2,14 @@ import { Button, Text, TextField, VFlow } from "bold-ui";
 import { PageContent } from "../../components/layout/PageContent";
 import { Box } from "../../components/layout/Box";
 import { useState } from "react";
-import { Config } from "./config-model";
+import { ChangeCredentials, Config } from "./config-model";
 import { getCache } from "../../hooks/useCache";
 import { TokenGenerator } from "./components/TokenGenerator";
 import { validateConfig, ValidationErrors } from "./config-validator";
 import { useAlert } from "../../hooks/useAlert";
 import { ServerUrlConfig } from "./components/ServerUrlConfig";
 import { useConfig } from "../../provider/useConfig";
+import { ModalAlterarCredenciais } from "./components/ModalAlterarCredenciais";
 
 export function ConfiguracoesView() {
   const { config, setConfig, serverUrl, token } = useConfig();
@@ -24,6 +25,10 @@ export function ConfiguracoesView() {
   const { alert, AlertRenderer } = useAlert();
 
   const [errors, setErrors] = useState<ValidationErrors>({});
+  const [errorsChangeUser, setErrorsChangeUser] = useState<string>("");
+
+  const [openModalCredenciais, setOpenModalCredenciais] =
+    useState<boolean>(false);
 
   const handleSubmit = () => {
     const validationErrors = validateConfig({
@@ -74,6 +79,37 @@ export function ConfiguracoesView() {
     }
   };
 
+  const handleSaveCredenciais = async (
+    changeCredentials: ChangeCredentials
+  ) => {
+    try {
+      const response = await fetch(`${serverUrl}/api/auth/change`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(changeCredentials),
+      });
+
+      console.log("response", response);
+
+      if (response.ok) {
+        setErrorsChangeUser("");
+        setOpenModalCredenciais(false);
+        alert("success", "Novas credenciais salvas com sucesso!");
+      }
+
+      if (response.status === 401) {
+        setErrorsChangeUser("Credenciais inválidas");
+        alert("danger", "Credenciais inválidas");
+      }
+    } catch (error) {
+      console.error("Erro ao salvar as novas credenciais:", error);
+      alert("danger", "Erro ao salvar as novas credenciais");
+    }
+  };
+
   return (
     <PageContent type="filled" fluid>
       <Box>
@@ -120,7 +156,28 @@ export function ConfiguracoesView() {
                 error={errors.inputVoice}
               />
             </Box>
-            <div style={{ flex: 1, padding: "1.5rem" }}></div>
+            <Box style={{ flex: 1 }}>
+              <VFlow>
+                <Text fontSize={1.2} fontWeight="bold">
+                  Credenciais de acesso
+                </Text>
+                <Button
+                  size="small"
+                  onClick={() => setOpenModalCredenciais(true)}
+                >
+                  Alterar credenciais de acesso
+                </Button>
+                <ModalAlterarCredenciais
+                  isModalOpen={openModalCredenciais}
+                  onClose={() => {
+                    setOpenModalCredenciais(false);
+                    setErrorsChangeUser("");
+                  }}
+                  onSubmit={handleSaveCredenciais}
+                  errors={errorsChangeUser}
+                />
+              </VFlow>
+            </Box>
           </div>
 
           <VFlow>

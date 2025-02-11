@@ -46,7 +46,7 @@ export function TokenGenerator({
     }
 
     try {
-      const response = await fetch(`${serverUrl}/api/auth/login`, {
+      const response = await fetch(`${serverUrl}/api/auth/generateToken`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,8 +59,6 @@ export function TokenGenerator({
       });
 
       const data = await response.json();
-
-      console.log("data", data);
 
       if (response.ok) {
         localStorage.setItem("authToken", data.token);
@@ -97,7 +95,7 @@ export function TokenGenerator({
         )}
       </HFlow>
       <HFlow hSpacing={2}>
-        <VFlow>
+        <VFlow vSpacing={0}>
           <Text fontSize={1} fontWeight="bold">
             Usuario
           </Text>
@@ -110,7 +108,7 @@ export function TokenGenerator({
             disabled={token !== ""}
           />
         </VFlow>
-        <VFlow>
+        <VFlow vSpacing={0}>
           <Text fontSize={1} fontWeight="bold">
             Senha
           </Text>

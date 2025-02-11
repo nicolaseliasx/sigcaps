@@ -23,7 +23,7 @@ public class SecurityConfig {
 				.csrf(AbstractHttpConfigurer::disable)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/auth/login", "/ws/**", "/api/health/status", "/api/config").permitAll()
+						.requestMatchers("/api/auth/generateToken", "/api/auth/change", "/ws/**", "/api/health/status", "/api/config").permitAll()
 						.anyRequest().authenticated()
 				)
 				.logout(logout -> logout.logoutSuccessUrl("/"));

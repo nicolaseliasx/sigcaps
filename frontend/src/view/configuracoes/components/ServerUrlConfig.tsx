@@ -61,6 +61,7 @@ export function ServerUrlConfig({
         Configuração do Servidor
       </Text>
       <Text fontSize={1}>URL do Servidor</Text>
+
       <TextField
         placeholder="Ex: http://127.0.0.1:8080"
         value={inputUrl}
