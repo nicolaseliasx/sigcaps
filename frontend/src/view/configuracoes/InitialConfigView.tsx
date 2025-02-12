@@ -5,6 +5,7 @@ import { Box } from "../../components/layout/Box";
 import { TokenGenerator } from "./components/TokenGenerator";
 import { ServerUrlConfig } from "./components/ServerUrlConfig";
 import { useAlert } from "../../hooks/useAlert";
+import { useFontScale } from "../../hooks/useFontScale";
 
 interface InitialConfigViewProps {
   setServerUrl: (url: string) => void;
@@ -16,6 +17,8 @@ export function InitialConfigView({ setServerUrl }: InitialConfigViewProps) {
   const [hasConnection, setHasConnection] = useState(false);
 
   const { alert, AlertRenderer } = useAlert();
+
+  const fontSizes = useFontScale(1);
 
   useEffect(() => {
     const storedUrl = localStorage.getItem("serverUrl");
@@ -54,7 +57,7 @@ export function InitialConfigView({ setServerUrl }: InitialConfigViewProps) {
   return (
     <PageContent type="filled" fluid>
       <VFlow>
-        <Text fontSize={1.5} fontWeight="bold">
+        <Text fontSize={fontSizes.base} fontWeight="bold">
           Configuração inicial da instalação
         </Text>
         <Box>
@@ -74,7 +77,7 @@ export function InitialConfigView({ setServerUrl }: InitialConfigViewProps) {
               disabled={inputUrl === "" || !hasToken || !hasConnection}
               style={{ marginTop: "1rem" }}
             >
-              Salvar
+              <Text fontSize={fontSizes.xsmall}>Salvar</Text>
             </Button>
           </Tooltip>
         </Box>

@@ -26,6 +26,6 @@ const createStyles = () => ({
   } as CSSProperties,
   fluid: {
     width: "100%",
-    maxWidth: "calc(1120px + 4rem)",
+    maxWidth: "calc(1280px + 4rem)",
   },
 });

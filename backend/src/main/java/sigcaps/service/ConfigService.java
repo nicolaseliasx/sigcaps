@@ -25,7 +25,7 @@ public class ConfigService {
 			Config configDefault = new Config();
 			configDefault.setId(UNIQUE_ID);
 			configDefault.setFontSize(2);
-			configDefault.setVoiceVolume(1);
+			configDefault.setVoiceVolume(100);
 			configDefault.setServerAddrs(serverIp);
 
 			this.save(configDefault);
@@ -44,7 +44,7 @@ public class ConfigService {
 	}
 
 	public Optional<Config> load() {
-		return repository.findById(String.valueOf(UNIQUE_ID));
+		return repository.findById(UNIQUE_ID);
 	}
 
 	private String getServerIp() {

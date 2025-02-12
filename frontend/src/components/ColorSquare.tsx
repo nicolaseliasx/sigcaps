@@ -6,14 +6,13 @@ interface ColorSquareProps {
 }
 
 export const ColorSquare: React.FC<ColorSquareProps> = ({ color, size }) => {
-  const baseSize = 50;
-
   return (
     <div
       style={{
-        width: `${baseSize * size}rem`,
-        height: `${baseSize * size}rem`,
+        width: `${size}rem`,
+        height: `${size}rem`,
         backgroundColor: color,
+        borderRadius: "0.5rem",
       }}
     />
   );

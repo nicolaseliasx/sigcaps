@@ -2,6 +2,8 @@ import { useState } from "react";
 import { TextField, Text, VFlow, Button, HFlow, Icon } from "bold-ui";
 import { urlValidator } from "../config-validator";
 import { useAlert } from "../../../hooks/useAlert";
+import { useFontScale } from "../../../hooks/useFontScale";
+import { useConfig } from "../../../provider/useConfig";
 
 interface ServerUrlConfigProps {
   initialValue: string;
@@ -19,6 +21,9 @@ export function ServerUrlConfig({
   const [inputUrl, setInputUrl] = useState(initialValue);
   const [urlErrors, setUrlErrors] = useState("");
   const [conection, setConection] = useState("");
+
+  const { config } = useConfig();
+  const fontSizes = useFontScale(config?.fontSize || 1);
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newUrl = e.target.value;
@@ -57,36 +62,51 @@ export function ServerUrlConfig({
 
   return (
     <VFlow>
-      <Text fontSize={1.2} fontWeight="bold">
+      <Text fontSize={fontSizes.small} fontWeight="bold">
         Configuração do Servidor
       </Text>
-      <Text fontSize={1}>URL do Servidor</Text>
-
+      <Text fontSize={fontSizes.xsmall}>URL do Servidor</Text>
+      {/* PROBLEMA RELACIONADO AO TAMANHO DA FONTE DOS ERRORS NAO CONSEGUI PASSAR STYLE VER CM ANDRÉ*/}
       <TextField
         placeholder="Ex: http://127.0.0.1:8080"
         value={inputUrl}
         onChange={handleUrlChange}
         clearable={false}
-        style={{ maxWidth: "50%" }}
+        style={{
+          maxWidth: "50%",
+          fontSize: `${fontSizes.xsmall}rem`,
+        }}
         error={urlErrors}
       />
 
       <HFlow>
         <Button size="small" onClick={handleTestConnection}>
-          Testar conexão com servidor
+          <Text fontSize={fontSizes.xsmall}>Testar conexão com servidor</Text>
         </Button>
         {conection == "falha" && (
           <HFlow alignItems="center">
-            <Icon icon="banOutline" fill="danger" size={1} />
-            <Text color="danger" style={{ margin: -8 }}>
+            <Icon icon="banOutline" fill="danger" size={fontSizes.xsmall} />
+            <Text
+              color="danger"
+              style={{ margin: -8 }}
+              fontSize={fontSizes.xsmall}
+            >
               Conexão mal sucedida.
             </Text>
           </HFlow>
         )}
         {conection == "sucesso" && (
           <HFlow alignItems="center">
-            <Icon icon="checkCircleOutline" fill="success" size={1} />
-            <Text color="success" style={{ margin: -8 }}>
+            <Icon
+              icon="checkCircleOutline"
+              fill="success"
+              size={fontSizes.xsmall}
+            />
+            <Text
+              color="success"
+              style={{ margin: -8 }}
+              fontSize={fontSizes.xsmall}
+            >
               Conexão bem sucedida.
             </Text>
           </HFlow>

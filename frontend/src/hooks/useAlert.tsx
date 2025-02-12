@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { Alert, AlertType } from "bold-ui";
+import { Alert, AlertType, Text } from "bold-ui";
+import { useConfig } from "../provider/useConfig";
+import { useFontScale } from "./useFontScale";
 
 export interface AlertItem {
   id: string;
@@ -10,6 +12,9 @@ export interface AlertItem {
 
 export const useAlert = () => {
   const [alerts, setAlerts] = useState<AlertItem[]>([]);
+
+  const { config } = useConfig();
+  const fontSizes = useFontScale(config?.fontSize || 1);
 
   const alert = (type: AlertType, message: React.ReactNode, timeout = 5000) => {
     const id = Math.random().toString(36).substr(2, 9);
@@ -24,10 +29,22 @@ export const useAlert = () => {
 
   const AlertRenderer: React.FC = () =>
     createPortal(
-      <div style={{ position: "fixed", top: 85, right: 30, zIndex: 2000 }}>
+      <div
+        style={{
+          position: "fixed",
+          top: 100 * fontSizes.xxsmall,
+          right: 30 * fontSizes.xxsmall,
+          zIndex: 2000,
+        }}
+      >
         {alerts.map((alert) => (
-          <Alert key={alert.id} type={alert.type}>
+          <Alert
+            key={alert.id}
+            type={alert.type}
+            style={{ fontSize: `${fontSizes.xsmall}rem` }}
+          >
             {alert.message}
+            <Text fontSize={fontSizes.xsmall} color="success"></Text>
           </Alert>
         ))}
       </div>,

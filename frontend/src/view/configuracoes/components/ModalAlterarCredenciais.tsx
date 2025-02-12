@@ -9,6 +9,8 @@ import {
 } from "bold-ui";
 import { useState } from "react";
 import { ChangeCredentials } from "../config-model";
+import { useConfig } from "../../../provider/useConfig";
+import { useFontScale } from "../../../hooks/useFontScale";
 
 interface ModalAlterarCredenciaisProps {
   isModalOpen: boolean;
@@ -24,6 +26,9 @@ export function ModalAlterarCredenciais(props: ModalAlterarCredenciaisProps) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newUser, setNewUser] = useState("");
   const [newPassword, setNewPassword] = useState("");
+
+  const { config } = useConfig();
+  const fontSizes = useFontScale(config?.fontSize || 1);
 
   const handleSubmit = () => {
     onSubmit({ currentUser, currentPassword, newUser, newPassword });
@@ -42,21 +47,21 @@ export function ModalAlterarCredenciais(props: ModalAlterarCredenciaisProps) {
     >
       <ModalBody>
         <VFlow>
-          <Text fontSize={1.5} fontWeight="bold">
+          <Text fontSize={fontSizes.base} fontWeight="bold">
             Alterar Credenciais de Acesso
           </Text>
-          <Text fontSize={1}>
+          <Text fontSize={fontSizes.xsmall}>
             Para alterar suas credenciais, insira o usuário e senha atuais e, em
             seguida, informe os novos dados de acesso.
           </Text>
 
           <VFlow>
-            <Text fontSize={1.2} fontWeight="bold">
+            <Text fontSize={fontSizes.small} fontWeight="bold">
               Credenciais Atuais
             </Text>
             <HFlow hSpacing={2}>
               <VFlow vSpacing={0}>
-                <Text fontSize={1} fontWeight="bold">
+                <Text fontSize={fontSizes.xsmall} fontWeight="bold">
                   Usuário Atual
                 </Text>
                 <TextField
@@ -65,10 +70,11 @@ export function ModalAlterarCredenciais(props: ModalAlterarCredenciaisProps) {
                   value={currentUser}
                   onChange={(e) => setCurrentUser(e.target.value)}
                   error={errors}
+                  style={{ fontSize: `${fontSizes.xsmall}rem` }}
                 />
               </VFlow>
               <VFlow vSpacing={0}>
-                <Text fontSize={1} fontWeight="bold">
+                <Text fontSize={fontSizes.xsmall} fontWeight="bold">
                   Senha Atual
                 </Text>
                 <TextField
@@ -78,18 +84,19 @@ export function ModalAlterarCredenciais(props: ModalAlterarCredenciaisProps) {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   error={errors ? " " : undefined}
+                  style={{ fontSize: `${fontSizes.xsmall}rem` }}
                 />
               </VFlow>
             </HFlow>
           </VFlow>
 
           <VFlow>
-            <Text fontSize={1.2} fontWeight="bold">
+            <Text fontSize={fontSizes.small} fontWeight="bold">
               Novas Credenciais
             </Text>
             <HFlow hSpacing={2}>
               <VFlow vSpacing={0}>
-                <Text fontSize={1} fontWeight="bold">
+                <Text fontSize={fontSizes.xsmall} fontWeight="bold">
                   Novo Usuário
                 </Text>
                 <TextField
@@ -97,10 +104,11 @@ export function ModalAlterarCredenciais(props: ModalAlterarCredenciaisProps) {
                   clearable={false}
                   value={newUser}
                   onChange={(e) => setNewUser(e.target.value)}
+                  style={{ fontSize: `${fontSizes.xsmall}rem` }}
                 />
               </VFlow>
               <VFlow vSpacing={0}>
-                <Text fontSize={1} fontWeight="bold">
+                <Text fontSize={fontSizes.xsmall} fontWeight="bold">
                   Nova Senha
                 </Text>
                 <TextField
@@ -109,6 +117,7 @@ export function ModalAlterarCredenciais(props: ModalAlterarCredenciaisProps) {
                   clearable={false}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
+                  style={{ fontSize: `${fontSizes.xsmall}rem` }}
                 />
               </VFlow>
             </HFlow>
@@ -116,10 +125,12 @@ export function ModalAlterarCredenciais(props: ModalAlterarCredenciaisProps) {
 
           <HFlow justifyContent="flex-end">
             <Button onClick={onClose} kind="normal">
-              Cancelar
+              <Text fontSize={fontSizes.xsmall}>Cancelar</Text>
             </Button>
             <Button onClick={handleSubmit} kind="danger">
-              Alterar
+              <Text fontSize={fontSizes.xsmall} style={{ color: "white" }}>
+                Alterar
+              </Text>
             </Button>
           </HFlow>
         </VFlow>
