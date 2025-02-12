@@ -19,7 +19,7 @@ public class WebSocketController {
 		this.messagingTemplate = messagingTemplate;
 	}
 
-	@MessageMapping("/chamadaPacient[e")
+	@MessageMapping("/chamadaPaciente")
 	public void handleChamadaPaciente(ChamadaPacienteDto input) {
 		ChamadaPacienteDto output = applicationService.chamarPaciente(input);
 		messagingTemplate.convertAndSend("/topic/chamadaPaciente", output);
