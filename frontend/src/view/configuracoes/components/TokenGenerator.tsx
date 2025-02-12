@@ -46,7 +46,7 @@ export function TokenGenerator({
     }
 
     try {
-      const response = await fetch(`${serverUrl}/api/auth/login`, {
+      const response = await fetch(`${serverUrl}/api/auth/generateToken`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,6 +73,7 @@ export function TokenGenerator({
         alert("danger", "Credenciais inválidas");
       }
     } catch (error) {
+      console.log("Erro ao gerar chave:", error);
       console.error("Erro ao gerar chave:", error);
       alert("danger", "Erro ao gerar chave");
     }
@@ -94,7 +95,7 @@ export function TokenGenerator({
         )}
       </HFlow>
       <HFlow hSpacing={2}>
-        <VFlow>
+        <VFlow vSpacing={0}>
           <Text fontSize={1} fontWeight="bold">
             Usuario
           </Text>
@@ -104,9 +105,10 @@ export function TokenGenerator({
             onChange={(e) => setUser(e.target.value)}
             clearable={false}
             error={credentialsError}
+            disabled={token !== ""}
           />
         </VFlow>
-        <VFlow>
+        <VFlow vSpacing={0}>
           <Text fontSize={1} fontWeight="bold">
             Senha
           </Text>
@@ -117,6 +119,7 @@ export function TokenGenerator({
             clearable={false}
             type="password"
             error={credentialsError ? " " : undefined}
+            disabled={token !== ""}
           />
         </VFlow>
         <Box>
@@ -147,7 +150,7 @@ export function TokenGenerator({
           size="small"
           kind="primary"
           onClick={handleGenerateToken}
-          disabled={user === "" || password === "" || token !== null}
+          disabled={user === "" || password === "" || token !== ""}
         >
           Gerar chave
         </Button>

@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Setter
 @Document(collection = "historico")
-public class HistoricoChamadosDocument {
+public class HistoricoChamados {
 	@Id
 	private String id;
 	private String nomePaciente;

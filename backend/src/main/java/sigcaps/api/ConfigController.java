@@ -10,10 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import io.jsonwebtoken.JwtException;
 import sigcaps.model.dto.ConfigDto;
 import sigcaps.service.ApplicationService;
-import sigcaps.service.TokenService;
+import sigcaps.service.AuthService;
 
 @RestController
 @RequestMapping("/api/config")
@@ -23,7 +22,7 @@ public class ConfigController {
 	private ApplicationService applicationService;
 
 	@Autowired
-	private TokenService tokenService;
+	private AuthService authService;
 
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
@@ -38,12 +37,12 @@ public class ConfigController {
 	public ResponseEntity<ConfigDto> saveConfig(@RequestHeader("Authorization") String authorizationHeader, @RequestBody ConfigDto config) {
 		String token = authorizationHeader.replace("Bearer ", "");
 		try {
-			tokenService.validateToken(token);
+			this.authService.validateTokenOrThrow(token);
 
 			this.applicationService.saveConfig(config);
 			messagingTemplate.convertAndSend("/topic/config/load", config);
 			return ResponseEntity.ok(config);
-		} catch (JwtException e) {
+		} catch (IllegalArgumentException e) {
 			return ResponseEntity
 					.status(HttpStatus.UNAUTHORIZED)
 					.body(null);

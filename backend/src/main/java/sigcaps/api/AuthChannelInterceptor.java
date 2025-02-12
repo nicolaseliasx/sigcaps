@@ -7,13 +7,13 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
-import sigcaps.service.TokenService;
+import sigcaps.service.AuthService;
 
 @Component
 public class AuthChannelInterceptor implements ChannelInterceptor {
 
 	@Autowired
-	private TokenService tokenService;
+	private AuthService authService;
 
 	@Override
 	public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -26,9 +26,9 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
 			}
 
 			try {
-				tokenService.validateToken(token.replace("Bearer ", ""));
-			} catch (Exception e) {
-				throw new IllegalArgumentException("Token inválido!", e);
+				authService.validateTokenOrThrow(token.replace("Bearer ", ""));
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("Invalid token", e);
 			}
 		}
 

@@ -3,7 +3,7 @@ package sigcaps.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sigcaps.model.document.HistoricoChamadosDocument;
+import sigcaps.model.document.HistoricoChamados;
 import sigcaps.model.dto.HistoricoChamadosDto;
 import sigcaps.repository.HistoricoChamadosRepository;
 
@@ -13,15 +13,15 @@ public class HistoricoChamadosService {
 	@Autowired
 	private HistoricoChamadosRepository repository;
 
-	public void save(HistoricoChamadosDocument historico) {
+	public void save(HistoricoChamados historico) {
 		repository.save(historico);
 	}
 
-	public List<HistoricoChamadosDocument> getUltimos10Registros() {
+	public List<HistoricoChamados> getUltimos10Registros() {
 		return repository.findTop10ByOrderByIdDesc();
 	}
 
-	public HistoricoChamadosDto convertToDto(HistoricoChamadosDocument document) {
+	public HistoricoChamadosDto convertToDto(HistoricoChamados document) {
 		HistoricoChamadosDto dto = new HistoricoChamadosDto();
 		dto.setNomePaciente(document.getNomePaciente());
 		dto.setClassificacao(document.getClassificacao());

@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
-import sigcaps.model.document.ConfigDocument;
+import sigcaps.model.document.Config;
 import sigcaps.model.dto.ConfigDto;
 import sigcaps.repository.ConfigRepository;
 
@@ -19,10 +19,10 @@ public class ConfigService {
 
 	@PostConstruct
 	private void loadDefaultConfigs() {
-		Optional<ConfigDocument> config = this.load();
+		Optional<Config> config = this.load();
 		String serverIp = String.format("http://%s:8081", this.getServerIp());
 		if (config.isEmpty()) {
-			ConfigDocument configDefault = new ConfigDocument();
+			Config configDefault = new Config();
 			configDefault.setId(UNIQUE_ID);
 			configDefault.setFontSize(2);
 			configDefault.setVoiceVolume(1);
@@ -30,7 +30,7 @@ public class ConfigService {
 
 			this.save(configDefault);
 		} else {
-			ConfigDocument configLoad = config.get();
+			Config configLoad = config.get();
 			configLoad.setServerAddrs(serverIp);
 
 			this.save(configLoad);
@@ -38,12 +38,12 @@ public class ConfigService {
 		System.out.println("IP do servidor: " + serverIp);
 	}
 
-	public void save(ConfigDocument newConfig) {
+	public void save(Config newConfig) {
 		newConfig.setId(UNIQUE_ID);
 		repository.save(newConfig);
 	}
 
-	public Optional<ConfigDocument> load() {
+	public Optional<Config> load() {
 		return repository.findById(String.valueOf(UNIQUE_ID));
 	}
 
@@ -56,8 +56,8 @@ public class ConfigService {
 		}
 	}
 
-	public ConfigDocument convertToDocument(ConfigDto dto) {
-		ConfigDocument document = new ConfigDocument();
+	public Config convertToDocument(ConfigDto dto) {
+		Config document = new Config();
 		document.setId(UNIQUE_ID);
 		document.setFontSize(dto.getFontSize());
 		document.setVoiceVolume(dto.getVoiceVolume());
@@ -66,7 +66,7 @@ public class ConfigService {
 		return document;
 	}
 
-	public ConfigDto convertToDto(ConfigDocument document) {
+	public ConfigDto convertToDto(Config document) {
 		ConfigDto dto = new ConfigDto();
 		dto.setNomeInstalacao(document.getNomeInstalacao());
 		dto.setFontSize(document.getFontSize());

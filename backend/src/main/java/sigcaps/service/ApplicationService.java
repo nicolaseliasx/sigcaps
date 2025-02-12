@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sigcaps.model.document.ConfigDocument;
-import sigcaps.model.document.HistoricoChamadosDocument;
+import sigcaps.model.document.Config;
+import sigcaps.model.document.HistoricoChamados;
 import sigcaps.model.dto.ChamadaPacienteDto;
 import sigcaps.model.dto.ConfigDto;
 
@@ -37,17 +37,17 @@ public class ApplicationService {
 	}
 
 	public ConfigDto loadConfig() {
-		Optional<ConfigDocument> optionalConfig = configService.load();
+		Optional<Config> optionalConfig = configService.load();
 		if (optionalConfig.isEmpty()) {
 			throw new RuntimeException("Config not found");
 		}
-		ConfigDocument config = optionalConfig.get();
+		Config config = optionalConfig.get();
 
 		return configService.convertToDto(config);
 	}
 
 	private void saveHistorico(ChamadaPacienteDto dto) {
-		HistoricoChamadosDocument historico = new HistoricoChamadosDocument();
+		HistoricoChamados historico = new HistoricoChamados();
 		historico.setNomePaciente(dto.getNomePaciente());
 		historico.setClassificacao(dto.getClassificacao());
 		historico.setTipoServico(dto.getTipoServico());

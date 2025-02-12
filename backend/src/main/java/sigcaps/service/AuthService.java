@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.JwtException;
+import sigcaps.model.dto.ChangeCredentialsDto;
 
 @Service
 @AllArgsConstructor
@@ -27,5 +28,14 @@ public class AuthService {
 		} catch (JwtException e) {
 			throw new IllegalArgumentException("Invalid token", e);
 		}
+	}
+
+	public boolean changeSuperUser(ChangeCredentialsDto changeCredentials) {
+		boolean isValid = this.userService.validateSuperUser(changeCredentials.getCurrentUser(), changeCredentials.getCurrentPassword());
+		if (isValid) {
+			this.userService.changeSuperUser(changeCredentials.getNewUser(), changeCredentials.getNewPassword());
+			return true;
+		}
+		return false;
 	}
 }

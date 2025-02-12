@@ -2,48 +2,81 @@ package sigcaps.service;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import sigcaps.model.document.User;
+import sigcaps.repository.UserRepository;
 
-public class UserServiceTest {
-	private final UserService userService = new UserService();
+@ExtendWith(MockitoExtension.class)
+class UserServiceTest {
+
+	@Mock
+	private UserRepository userRepository;
+
+	@Mock
+	private PasswordEncoder passwordEncoder;
+
+	@InjectMocks
+	private UserService userService;
 
 	@Test
 	void validateSuperUser_withValidCredentials_returnsTrue() {
-		String validUsername = "superuser";
-		String validPassword = "password123";
+		User mockUser = new User();
+		mockUser.setUsername("admin");
+		mockUser.setPassword("encodedPassword");
 
-		boolean result = userService.validateSuperUser(validUsername, validPassword);
+		when(userRepository.findByUsername("admin")).thenReturn(Optional.of(mockUser));
+		when(passwordEncoder.matches("admin123", "encodedPassword")).thenReturn(true);
 
-		assertTrue(result, "Expected superuser credentials to be valid");
+		boolean result = userService.validateSuperUser("admin", "admin123");
+
+		assertTrue(result);
+		verify(userRepository).findByUsername("admin");
+		verify(passwordEncoder).matches("admin123", "encodedPassword");
 	}
 
 	@Test
 	void validateSuperUser_withInvalidUsername_returnsFalse() {
-		String invalidUsername = "invaliduser";
-		String validPassword = "password123";
+		when(userRepository.findByUsername("invaliduser")).thenReturn(Optional.empty());
 
-		boolean result = userService.validateSuperUser(invalidUsername, validPassword);
+		boolean result = userService.validateSuperUser("invaliduser", "admin123");
 
-		assertFalse(result, "Expected invalid username to return false");
+		assertFalse(result);
+		verify(userRepository).findByUsername("invaliduser");
+		verifyNoInteractions(passwordEncoder);
 	}
 
 	@Test
 	void validateSuperUser_withInvalidPassword_returnsFalse() {
-		String validUsername = "superuser";
-		String invalidPassword = "wrongpassword";
+		User mockUser = new User();
+		mockUser.setUsername("admin");
+		mockUser.setPassword("encodedPassword");
 
-		boolean result = userService.validateSuperUser(validUsername, invalidPassword);
+		when(userRepository.findByUsername("admin")).thenReturn(Optional.of(mockUser));
+		when(passwordEncoder.matches("wrongpassword", "encodedPassword")).thenReturn(false);
 
-		assertFalse(result, "Expected invalid password to return false");
+		boolean result = userService.validateSuperUser("admin", "wrongpassword");
+
+		assertFalse(result);
+		verify(passwordEncoder).matches("wrongpassword", "encodedPassword");
 	}
 
 	@Test
 	void validateSuperUser_withInvalidCredentials_returnsFalse() {
-		String invalidUsername = "invaliduser";
-		String invalidPassword = "wrongpassword";
+		when(userRepository.findByUsername("invaliduser")).thenReturn(Optional.empty());
 
-		boolean result = userService.validateSuperUser(invalidUsername, invalidPassword);
+		boolean result = userService.validateSuperUser("invaliduser", "wrongpassword");
 
-		assertFalse(result, "Expected invalid credentials to return false");
+		assertFalse(result);
+		verify(userRepository).findByUsername("invaliduser");
+		verifyNoInteractions(passwordEncoder);
 	}
 }
