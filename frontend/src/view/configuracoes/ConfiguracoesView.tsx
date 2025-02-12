@@ -10,9 +10,12 @@ import { useAlert } from "../../hooks/useAlert";
 import { ServerUrlConfig } from "./components/ServerUrlConfig";
 import { useConfig } from "../../provider/useConfig";
 import { ModalAlterarCredenciais } from "./components/ModalAlterarCredenciais";
+import { useFontScale } from "../../hooks/useFontScale";
 
 export function ConfiguracoesView() {
   const { config, setConfig, serverUrl, token } = useConfig();
+
+  const fontSizes = useFontScale(config?.fontSize || 1);
 
   const appConfig = getCache<Config>("appConfig") || config;
   const [inputUrl, setInputUrl] = useState(appConfig?.serverAddrs || "");
@@ -113,13 +116,13 @@ export function ConfiguracoesView() {
   return (
     <PageContent type="filled" fluid>
       <Box>
-        <Text fontSize={1.5} fontWeight="bold">
+        <Text fontSize={fontSizes.base} fontWeight="bold">
           Configurações da instalação
         </Text>
         <VFlow style={{ marginTop: "1rem" }}>
           <div style={{ display: "flex", gap: "1rem", width: "100%" }}>
             <Box style={{ flex: 1 }}>
-              <Text fontSize={1.2} fontWeight="bold">
+              <Text fontSize={fontSizes.xsmall} fontWeight="bold">
                 Nome da Instalação
               </Text>
               <TextField
@@ -128,10 +131,11 @@ export function ConfiguracoesView() {
                 onChange={(e) => setNomeInstalacao(e.target.value)}
                 clearable={false}
                 error={errors.nomeInstalacao}
+                style={{ fontSize: `${fontSizes.xsmall}rem` }}
               />
             </Box>
             <Box style={{ flex: 1 }}>
-              <Text fontSize={1.2} fontWeight="bold">
+              <Text fontSize={fontSizes.xsmall} fontWeight="bold">
                 Tamanho da fonte
               </Text>
               <TextField
@@ -140,12 +144,13 @@ export function ConfiguracoesView() {
                 onChange={(e) => setInputFont(e.target.value)}
                 clearable={false}
                 error={errors.inputFont}
+                style={{ fontSize: `${fontSizes.xsmall}rem` }}
               />
             </Box>
           </div>
           <div style={{ display: "flex", gap: "1rem", width: "100%" }}>
             <Box style={{ flex: 1 }}>
-              <Text fontSize={1.2} fontWeight="bold">
+              <Text fontSize={fontSizes.xsmall} fontWeight="bold">
                 Volume do leitor de voz
               </Text>
               <TextField
@@ -154,18 +159,21 @@ export function ConfiguracoesView() {
                 onChange={(e) => setInputVoice(e.target.value)}
                 clearable={false}
                 error={errors.inputVoice}
+                style={{ fontSize: `${fontSizes.xsmall}rem` }}
               />
             </Box>
             <Box style={{ flex: 1 }}>
               <VFlow>
-                <Text fontSize={1.2} fontWeight="bold">
+                <Text fontSize={fontSizes.xsmall} fontWeight="bold">
                   Credenciais de acesso
                 </Text>
                 <Button
                   size="small"
                   onClick={() => setOpenModalCredenciais(true)}
                 >
-                  Alterar credenciais de acesso
+                  <Text fontSize={fontSizes.xsmall}>
+                    Alterar credenciais de acesso
+                  </Text>
                 </Button>
                 <ModalAlterarCredenciais
                   isModalOpen={openModalCredenciais}
@@ -189,7 +197,9 @@ export function ConfiguracoesView() {
             </Box>
           </VFlow>
 
-          <Button onClick={handleSubmit}>Salvar</Button>
+          <Button onClick={handleSubmit}>
+            <Text fontSize={fontSizes.xsmall}>Salvar</Text>
+          </Button>
         </VFlow>
       </Box>
       <AlertRenderer />

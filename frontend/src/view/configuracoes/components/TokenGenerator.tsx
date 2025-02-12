@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useAlert } from "../../../hooks/useAlert";
 import { urlValidator } from "../config-validator";
 import { useConfig } from "../../../provider/useConfig";
+import { useFontScale } from "../../../hooks/useFontScale";
 
 interface TokenGeneratorProps {
   serverUrl: string;
@@ -31,6 +32,9 @@ export function TokenGenerator({
   const [urlErros, setUrlErros] = useState("");
 
   const { alert, AlertRenderer } = useAlert();
+
+  const { config } = useConfig();
+  const fontSizes = useFontScale(config?.fontSize || 1);
 
   const handleGenerateToken = async () => {
     if (!user || !password) {
@@ -82,7 +86,7 @@ export function TokenGenerator({
   return (
     <VFlow>
       <HFlow>
-        <Text fontSize={1.2} fontWeight="bold">
+        <Text fontSize={fontSizes.small} fontWeight="bold">
           Configurações autenticação{" "}
           <Tooltip text="Uma chave de autenticação é uma credencial gerada pelo servidor para identificar e autorizar usuários em requisições.">
             <Icon icon="infoCircleFilled" size={1} />
@@ -90,13 +94,15 @@ export function TokenGenerator({
         </Text>
         {urlErros && (
           <Tag type="danger">
-            <Text color="inherit">{urlErros}</Text>
+            <Text color="inherit" fontSize={fontSizes.xsmall}>
+              {urlErros}
+            </Text>
           </Tag>
         )}
       </HFlow>
       <HFlow hSpacing={2}>
         <VFlow vSpacing={0}>
-          <Text fontSize={1} fontWeight="bold">
+          <Text fontSize={fontSizes.xsmall} fontWeight="bold">
             Usuario
           </Text>
           <TextField
@@ -106,10 +112,11 @@ export function TokenGenerator({
             clearable={false}
             error={credentialsError}
             disabled={token !== ""}
+            style={{ fontSize: `${fontSizes.xsmall}rem` }}
           />
         </VFlow>
         <VFlow vSpacing={0}>
-          <Text fontSize={1} fontWeight="bold">
+          <Text fontSize={fontSizes.xsmall} fontWeight="bold">
             Senha
           </Text>
           <TextField
@@ -120,20 +127,25 @@ export function TokenGenerator({
             type="password"
             error={credentialsError ? " " : undefined}
             disabled={token !== ""}
+            style={{ fontSize: `${fontSizes.xsmall}rem` }}
           />
         </VFlow>
         <Box>
           <HFlow>
-            <Text fontSize={1.2} fontWeight="bold">
+            <Text fontSize={fontSizes.xsmall} fontWeight="bold">
               Status da chave:
             </Text>
             {token ? (
               <Tag type="success" icon="checkCircleFilled">
-                <Text color="inherit">Chave registrada</Text>
+                <Text color="inherit" fontSize={fontSizes.xsmall}>
+                  Chave registrada
+                </Text>
               </Tag>
             ) : (
               <Tag icon="banFilled">
-                <Text color="inherit">Chave não registrada</Text>
+                <Text color="inherit" fontSize={fontSizes.xsmall}>
+                  Chave não registrada
+                </Text>
               </Tag>
             )}
           </HFlow>
@@ -152,7 +164,9 @@ export function TokenGenerator({
           onClick={handleGenerateToken}
           disabled={user === "" || password === "" || token !== ""}
         >
-          Gerar chave
+          <Text fontSize={fontSizes.xsmall} style={{ color: "white" }}>
+            Gerar chave
+          </Text>
         </Button>
       </Tooltip>
       <AlertRenderer />

@@ -1,18 +1,27 @@
-import { VFlow, Text, useTheme, HFlow, Grid, Cell } from "bold-ui";
+import { VFlow, Text, HFlow } from "bold-ui";
 import { PageContent } from "../../components/layout/PageContent";
-import { ChamadaPaciente, painelColorRecord } from "./painel-model";
-import { tittleCase } from "../../utils/utils";
-import { ColorSquare } from "../../components/ColorSquare";
-import { idToRiscoClassificacao } from "./painel-utils";
+import {
+  ChamadaPaciente,
+  riscoColorRecord,
+  riscoNomeRecord,
+} from "./painel-model";
+import { titleCase } from "../../utils/utils";
+import { formatDatePainel, idToRiscoClassificacao } from "./painel-utils";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { useTextToSpeech } from "../../hooks/useTextToSpeech";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useConfig } from "../../provider/useConfig";
+import { Box } from "../../components/layout/Box";
+import { ColorSquare } from "../../components/ColorSquare";
+import { HistoricoTable } from "./components/HistoricoTable";
+import { useFontScale } from "../../hooks/useFontScale";
 
 export default function PainelChamadasView() {
   const { config, serverUrl } = useConfig();
-  const fontSize = config?.fontSize ?? 1;
-  const theme = useTheme();
+
+  const fontSizes = useFontScale(config?.fontSize || 1);
+
+  const voiceVolume = config?.voiceVolume ?? 1;
   const { speak } = useTextToSpeech();
 
   const { data: chamadaPaciente } = useWebSocket<ChamadaPaciente>(
@@ -21,79 +30,83 @@ export default function PainelChamadasView() {
     "chamadaPaciente"
   );
 
+  const [nowFormatted, setNowFormatted] = useState<string>(
+    titleCase(formatDatePainel(new Date()))
+  );
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNowFormatted(titleCase(formatDatePainel(new Date())));
+    }, 20000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     if (chamadaPaciente) {
       speak(chamadaPaciente?.nomePaciente, { volume: config?.voiceVolume });
     }
-  }, [chamadaPaciente, config?.voiceVolume, speak]);
-
-  const tipoServico = chamadaPaciente?.tipoServico?.join(" e ");
+  }, [chamadaPaciente, voiceVolume, speak, config?.voiceVolume]);
 
   return chamadaPaciente ? (
-    <PageContent type="filled">
-      <VFlow
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <HFlow alignItems="center">
-          <Text fontSize={fontSize * 3.6}>
-            {tittleCase(chamadaPaciente?.nomePaciente)}
-          </Text>
-          <ColorSquare
-            color={
-              painelColorRecord[
-                idToRiscoClassificacao(chamadaPaciente.classificacao)
-              ]
-            }
-            size={fontSize * 0.08}
-          />
-        </HFlow>
-        <Text fontSize={fontSize * 2}>{tittleCase(tipoServico)}</Text>
-      </VFlow>
-      <div
-        style={{
-          width: "100vw",
-          height: "0.1rem",
-          backgroundColor: theme.pallete.gray.c70,
-          margin: "2rem 0",
-        }}
-      />
+    <PageContent type="filled" style={{ margin: "2em" }}>
       <VFlow>
-        <Text fontSize={fontSize * 2} fontWeight="bold">
-          Historico de chamadas
+        <Text fontSize={fontSizes.small} fontWeight="bold">
+          {nowFormatted}
         </Text>
-        {chamadaPaciente?.historico.map((historico, index) => (
-          <Grid tabIndex={index}>
-            <Cell size={1}>
-              <Text fontSize={fontSize}>
-                {new Date(historico?.horario).toLocaleTimeString("pt-BR", {
-                  hour12: false,
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: undefined,
-                })}
-              </Text>
-            </Cell>
-            <Cell size={2}>
-              <Text fontSize={fontSize} fontWeight="bold">
-                {tittleCase(historico?.nomePaciente)}
-              </Text>
-            </Cell>
-            <Cell size={2}>
-              <ColorSquare
-                color={
-                  painelColorRecord[
-                    idToRiscoClassificacao(historico.classificacao)
-                  ]
-                }
-                size={fontSize * 0.03}
-              />
-            </Cell>
-          </Grid>
-        ))}
+        <VFlow vSpacing={0}>
+          <Box style={{ display: "flex", justifyContent: "center" }}>
+            <Text fontSize={fontSizes.xlarge} fontWeight="bold">
+              {titleCase(chamadaPaciente?.nomePaciente)}
+            </Text>
+          </Box>
+          <div style={{ display: "flex", width: "100%" }}>
+            <Box style={{ margin: "0", padding: "1rem 2rem" }}>
+              <VFlow>
+                <Text fontSize={fontSizes.base} fontWeight="bold">
+                  Classificação de risco
+                </Text>
+                <HFlow alignItems="center">
+                  <ColorSquare
+                    color={
+                      riscoColorRecord[
+                        idToRiscoClassificacao(chamadaPaciente.classificacao)
+                      ]
+                    }
+                    size={fontSizes.medium}
+                  />
+                  <Text fontSize={fontSizes.base}>
+                    {
+                      riscoNomeRecord[
+                        idToRiscoClassificacao(chamadaPaciente.classificacao)
+                      ]
+                    }
+                  </Text>
+                </HFlow>
+              </VFlow>
+            </Box>
+            <Box style={{ margin: "0", flex: "1", padding: "1rem 2rem" }}>
+              <VFlow>
+                <Text fontSize={fontSizes.base} fontWeight="bold">
+                  Atendimento
+                </Text>
+                <Text fontSize={fontSizes.base}>
+                  {titleCase(chamadaPaciente?.tipoServico?.join(" e "))}
+                </Text>
+              </VFlow>
+            </Box>
+          </div>
+        </VFlow>
+
+        <VFlow style={{ marginTop: "1rem" }}>
+          <Text fontSize={fontSizes.small} fontWeight="bold">
+            Histórico de chamadas
+          </Text>
+          {chamadaPaciente?.historico &&
+            chamadaPaciente.historico.length > 0 && (
+              <HistoricoTable historico={chamadaPaciente.historico} />
+            )}
+        </VFlow>
       </VFlow>
     </PageContent>
   ) : (
@@ -105,7 +118,7 @@ export default function PainelChamadasView() {
           alignItems: "center",
         }}
       >
-        <Text fontSize={fontSize * 0.8}>
+        <Text fontSize={fontSizes.medium} fontWeight="bold">
           Sem dados a serem exibidos. Realize chamadas de pacientes.
         </Text>
       </VFlow>

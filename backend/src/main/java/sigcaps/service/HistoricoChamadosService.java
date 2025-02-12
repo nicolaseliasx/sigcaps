@@ -26,6 +26,7 @@ public class HistoricoChamadosService {
 		dto.setNomePaciente(document.getNomePaciente());
 		dto.setClassificacao(document.getClassificacao());
 		dto.setHorario(document.getHorario());
+		dto.setTipoServico(document.getTipoServico());
 		return dto;
 	}
 }

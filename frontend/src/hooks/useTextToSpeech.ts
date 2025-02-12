@@ -36,6 +36,7 @@ export const useTextToSpeech = () => {
 
   const speak = useCallback(
     (text: string, options: SpeechOptions = {}) => {
+      console.log(options);
       if (!isVoiceReady) {
         return;
       }
@@ -49,9 +50,11 @@ export const useTextToSpeech = () => {
 
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.voice = voice;
-      utterance.pitch = options.pitch || 1;
-      utterance.rate = options.rate || 1;
-      utterance.volume = options.volume || 1;
+      utterance.pitch = options.pitch ?? 1;
+      utterance.rate = options.rate ?? 1;
+      utterance.volume = Math.min(1, Math.max(0, (options.volume ?? 1) / 100));
+
+      console.log("Volume ajustado:", utterance.volume);
 
       synth.speak(utterance);
     },
