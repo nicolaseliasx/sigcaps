@@ -1,4 +1,4 @@
-import { Button, HFlow, Text, TextField, VFlow } from "bold-ui";
+import { Button, Text, TextField, VFlow } from "bold-ui";
 import { PageContent } from "../../components/layout/PageContent";
 import { Box } from "../../components/layout/Box";
 import { useState } from "react";
@@ -76,57 +76,53 @@ export function ConfiguracoesView() {
 
   return (
     <PageContent type="filled" fluid>
-      <Text fontSize={1.5} fontWeight="bold">
-        Configurações da instalação
-      </Text>
+      <Box>
+        <Text fontSize={1.5} fontWeight="bold">
+          Configurações da instalação
+        </Text>
+        <VFlow style={{ marginTop: "1rem" }}>
+          <div style={{ display: "flex", gap: "1rem", width: "100%" }}>
+            <Box style={{ flex: 1 }}>
+              <Text fontSize={1.2} fontWeight="bold">
+                Nome da Instalação
+              </Text>
+              <TextField
+                placeholder="Ex: Unidade Saude 1"
+                value={nomeInstalacao}
+                onChange={(e) => setNomeInstalacao(e.target.value)}
+                clearable={false}
+                error={errors.nomeInstalacao}
+              />
+            </Box>
+            <Box style={{ flex: 1 }}>
+              <Text fontSize={1.2} fontWeight="bold">
+                Tamanho da fonte
+              </Text>
+              <TextField
+                placeholder="1 a 100"
+                value={inputFont}
+                onChange={(e) => setInputFont(e.target.value)}
+                clearable={false}
+                error={errors.inputFont}
+              />
+            </Box>
+          </div>
+          <div style={{ display: "flex", gap: "1rem", width: "100%" }}>
+            <Box style={{ flex: 1 }}>
+              <Text fontSize={1.2} fontWeight="bold">
+                Volume do leitor de voz
+              </Text>
+              <TextField
+                placeholder="1 a 100"
+                value={inputVoice}
+                onChange={(e) => setInputVoice(e.target.value)}
+                clearable={false}
+                error={errors.inputVoice}
+              />
+            </Box>
+            <div style={{ flex: 1, padding: "1.5rem" }}></div>
+          </div>
 
-      <Box style={{ marginTop: "1rem" }}>
-        <VFlow>
-          <HFlow style={{ justifyContent: "space-between", marginTop: "1rem" }}>
-            <Box>
-              <VFlow>
-                <Text fontSize={1.2} fontWeight="bold">
-                  Nome da Instalação
-                </Text>
-                <TextField
-                  placeholder="Ex: Unidade Saude 1"
-                  value={nomeInstalacao}
-                  onChange={(e) => setNomeInstalacao(e.target.value)}
-                  clearable={false}
-                  error={errors.nomeInstalacao}
-                />
-              </VFlow>
-            </Box>
-
-            <Box>
-              <VFlow>
-                <Text fontSize={1.2} fontWeight="bold">
-                  Tamanho da fonte
-                </Text>
-                <TextField
-                  placeholder="1 a 100"
-                  value={inputFont}
-                  onChange={(e) => setInputFont(e.target.value)}
-                  clearable={false}
-                  error={errors.inputFont}
-                />
-              </VFlow>
-            </Box>
-            <Box>
-              <VFlow>
-                <Text fontSize={1.2} fontWeight="bold">
-                  Volume do leitor de voz
-                </Text>
-                <TextField
-                  placeholder="1 a 100"
-                  value={inputVoice}
-                  onChange={(e) => setInputVoice(e.target.value)}
-                  clearable={false}
-                  error={errors.inputVoice}
-                />
-              </VFlow>
-            </Box>
-          </HFlow>
           <VFlow>
             <Box>
               <ServerUrlConfig initialValue={inputUrl} onChange={setInputUrl} />

@@ -21,11 +21,20 @@ export const validateConfig = (data: {
   if (!data.nomeInstalacao.trim())
     errors.nomeInstalacao = "Nome da instalação é obrigatório.";
 
+  if (data.nomeInstalacao.trim().length > 80)
+    errors.nomeInstalacao =
+      "Nome da instalação deve ter no máximo 80 caracteres.";
+
+  if (data.nomeInstalacao.trim().length < 2)
+    errors.nomeInstalacao =
+      "Nome da instalação deve ter no mínimo 2 caracteres.";
+
   const urlError = urlValidator(data.inputUrl);
   if (urlError) {
     errors.inputUrl = urlError;
   }
 
+  // TODO: Valores de tamanho de fonte serão ajustandos em outra issue tambem valor de volume de voice
   if (!data.inputFont) errors.inputFont = "Tamanho da fonte é obrigatório.";
   else if (
     isNaN(Number(data.inputFont)) ||

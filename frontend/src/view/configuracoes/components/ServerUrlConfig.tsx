@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextField, Text, VFlow, Button, HFlow, Tag } from "bold-ui";
+import { TextField, Text, VFlow, Button, HFlow, Icon } from "bold-ui";
 import { urlValidator } from "../config-validator";
 import { useAlert } from "../../../hooks/useAlert";
 
@@ -41,12 +41,12 @@ export function ServerUrlConfig({
         alert("success", "Conexão bem sucessida");
       } else {
         setConection("falha");
-        alert("danger", "Conexão falhou");
+        alert("danger", "Conexão mal sucedida.");
       }
     } catch (error) {
-      console.error("Conexão falhou:", error);
+      console.error("Conexão mal sucedida:", error);
       setConection("falha");
-      alert("danger", "Conexão falhou");
+      alert("danger", "Conexão mal sucedida.");
     }
   };
 
@@ -61,23 +61,29 @@ export function ServerUrlConfig({
         value={inputUrl}
         onChange={handleUrlChange}
         clearable={false}
-        style={{ maxWidth: "30rem" }}
+        style={{ maxWidth: "50%" }}
         error={urlErrors}
       />
 
       <HFlow>
         <Button size="small" onClick={handleTestConnection}>
-          Testar conexão
+          Testar conexão com servidor
         </Button>
         {conection == "falha" && (
-          <Tag type="danger">
-            <Text color="inherit">Conexão falhou</Text>
-          </Tag>
+          <HFlow alignItems="center">
+            <Icon icon="banOutline" fill="danger" size={1} />
+            <Text color="danger" style={{ margin: -8 }}>
+              Conexão mal sucedida.
+            </Text>
+          </HFlow>
         )}
         {conection == "sucesso" && (
-          <Tag type="success">
-            <Text color="inherit">Conexão bem sucessida</Text>
-          </Tag>
+          <HFlow alignItems="center">
+            <Icon icon="checkCircleOutline" fill="success" size={1} />
+            <Text color="success" style={{ margin: -8 }}>
+              Conexão bem sucedida.
+            </Text>
+          </HFlow>
         )}
       </HFlow>
 
