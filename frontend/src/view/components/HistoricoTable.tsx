@@ -24,12 +24,11 @@ interface HistoricoTableProps {
 
 type RiscoClassificacao = keyof typeof riscoRecord;
 
-export function HistoricoTable({ historico }: HistoricoTableProps) {
-  const [sort, setSort] = useState(["horario"]);
-
-  const rows: HistoricoRow[] = historico.map((item, index) => {
+const convertHistoricoToRows = (
+  historico: HistoricoTableProps["historico"]
+): HistoricoRow[] => {
+  return historico.map((item, index) => {
     const classificacao = idToRiscoClassificacao(item.classificacao);
-
     const classificacaoValida =
       classificacao in riscoRecord
         ? (classificacao as RiscoClassificacao)
@@ -47,6 +46,11 @@ export function HistoricoTable({ historico }: HistoricoTableProps) {
       tipoServico: item.tipoServico ?? [],
     };
   });
+};
+
+export function HistoricoTable({ historico }: HistoricoTableProps) {
+  const [sort, setSort] = useState(["horario"]);
+  const rows = convertHistoricoToRows(historico);
 
   return (
     <DataTable<HistoricoRow>

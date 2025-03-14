@@ -10,6 +10,8 @@ export const useTextToSpeech = () => {
   const synth = window.speechSynthesis;
 
   useEffect(() => {
+    // nao funciona na primeira vez /n ta saindo som
+
     if ("speechSynthesis" in window) {
       const loadVoices = () => {
         const availableVoices = synth.getVoices();

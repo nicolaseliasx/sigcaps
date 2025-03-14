@@ -1,6 +1,8 @@
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
+type CallbackType<T> = (data: T) => void;
+
 class WebSocketManager {
   private client: Client | null = null;
   private subscriptions = new Map<string, Set<(data: unknown) => void>>();
@@ -44,46 +46,53 @@ class WebSocketManager {
   }
 
   private notifySubscribers<T>(topic: string, data: T) {
-    this.subscriptions.get(topic)?.forEach((callback) => {
-      (callback as (data: T) => void)(data);
-    });
+    const callbacks = this.subscriptions.get(topic);
+    if (!callbacks) return;
+
+    for (const callback of callbacks) {
+      (callback as CallbackType<T>)(data);
+    }
   }
 
-  subscribe<T>(topic: string, callback: (data: T) => void): () => void {
+  subscribe<T>(topic: string, onMessage: CallbackType<T>): () => void {
     const wrapper = (data: T) => {
-      callback(data);
-
+      onMessage(data);
       localStorage.setItem(topic, JSON.stringify(data));
     };
 
     const cachedData = localStorage.getItem(topic);
     if (cachedData) {
       try {
-        callback(JSON.parse(cachedData));
+        const parsedData = JSON.parse(cachedData) as T;
+        onMessage(parsedData);
       } catch (error) {
         console.error("Cache parsing error:", error);
       }
     }
 
-    if (!this.subscriptions.has(topic)) {
-      this.subscriptions.set(topic, new Set());
-    }
-    this.subscriptions.get(topic)?.add(wrapper as (data: unknown) => void);
+    this.addSubscription(topic, wrapper);
 
     if (this.client?.connected) {
       const subscription = this.setupWebSocketSubscription<T>(topic);
 
       return () => {
         subscription?.unsubscribe();
-        this.subscriptions
-          .get(topic)
-          ?.delete(wrapper as (data: unknown) => void);
+        this.removeSubscription(topic, wrapper);
       };
     }
 
-    return () => {
-      this.subscriptions.get(topic)?.delete(wrapper as (data: unknown) => void);
-    };
+    return () => this.removeSubscription(topic, wrapper);
+  }
+
+  private addSubscription<T>(topic: string, wrapper: CallbackType<T>) {
+    if (!this.subscriptions.has(topic)) {
+      this.subscriptions.set(topic, new Set());
+    }
+    this.subscriptions.get(topic)?.add(wrapper as (data: unknown) => void);
+  }
+
+  private removeSubscription<T>(topic: string, wrapper: CallbackType<T>) {
+    this.subscriptions.get(topic)?.delete(wrapper as (data: unknown) => void);
   }
 }
 
