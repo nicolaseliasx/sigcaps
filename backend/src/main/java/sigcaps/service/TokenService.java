@@ -1,33 +1,72 @@
 package sigcaps.service;
 
 import java.security.Key;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Date;
-import org.springframework.stereotype.Service;
-import io.jsonwebtoken.JwtException;
+import java.util.concurrent.TimeUnit;
+import org.springframework.stereotype.Component;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
-@Service
+@Component
 public class TokenService {
-	private static final String SECRET_KEY = "579eb9c51f49b3e9a7cf87784adce0c6ca5045d7756a09e026baa4d86b10e5fe";
-	protected static final Key KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
-	public String generateToken(String subject, String role) {
+	private final String SECRET_KEY = "0IscarAkdJwK1rd7TUWh1uKBHjOSLV2IWqYhstoxokk=";
+	private final long EXPIRATION_TIME = TimeUnit.DAYS.toMillis(30);
+	private final long REFRESH_EXPIRATION_TIME = TimeUnit.DAYS.toMillis(90);
+
+	private Key getSigningKey() {
+		return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+	}
+
+	public String generateToken(String accessKey) {
 		return Jwts.builder()
-				.setSubject(subject)
-				.claim("role", role)
+				.setSubject(accessKey)
 				.setIssuedAt(new Date())
-				// TODO: Token nunca vai expirar no mvp
-				//.setExpiration(new Date(System.currentTimeMillis() + duration))
-				.signWith(KEY, SignatureAlgorithm.HS256)
+				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+				.signWith(getSigningKey(), SignatureAlgorithm.HS256)
 				.compact();
 	}
 
-	public void validateToken(String token) throws JwtException {
-		Jwts.parserBuilder()
-				.setSigningKey(KEY)
-				.build()
-				.parseClaimsJws(token);
+	public String generateRefreshToken(String accessKey) {
+		return Jwts.builder()
+				.setSubject(accessKey)
+				.setIssuedAt(new Date())
+				.setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION_TIME))
+				.signWith(getSigningKey(), SignatureAlgorithm.HS256)
+				.compact();
+	}
+
+	public boolean validateToken(String token) {
+		if (token == null || token.isBlank()) {
+			return false;
+		}
+
+		try {
+			Claims claims = Jwts.parserBuilder()
+					.setSigningKey(getSigningKey())
+					.build()
+					.parseClaimsJws(token)
+					.getBody();
+
+			return claims.getExpiration().after(new Date());
+
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public String getAccessKeyFromToken(String token) {
+		return Jwts.parserBuilder().setSigningKey(getSigningKey()).build()
+				.parseClaimsJws(token).getBody().getSubject();
+	}
+
+	private static String generateSecretKey() {
+		byte[] key = new byte[32]; // 256 bits
+		new SecureRandom().nextBytes(key);
+		return Base64.getEncoder().encodeToString(key);
 	}
 }

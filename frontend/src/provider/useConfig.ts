@@ -6,6 +6,5 @@ export function useConfig() {
   if (!context) {
     throw new Error("useConfig deve ser usado dentro de um ConfigProvider");
   }
-
   return context;
 }

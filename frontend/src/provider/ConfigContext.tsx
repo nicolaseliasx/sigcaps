@@ -1,7 +1,8 @@
 import { createContext } from "react";
-import { Config } from "../view/configuracoes/config-model";
 
-interface ConfigContextType {
+import { Config } from "./ConfigProvider";
+
+export interface ConfigContextModel {
   config: Config | null;
   setConfig: (config: Config) => void;
   serverUrl: string;
@@ -10,6 +11,6 @@ interface ConfigContextType {
   setToken: (token: string) => void;
 }
 
-export const ConfigContext = createContext<ConfigContextType | undefined>(
+export const ConfigContext = createContext<ConfigContextModel | undefined>(
   undefined
 );

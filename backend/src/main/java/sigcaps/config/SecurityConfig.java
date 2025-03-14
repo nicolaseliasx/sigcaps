@@ -3,30 +3,52 @@ package sigcaps.config;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import sigcaps.api.secutiry.RestJwtFilter;
+import sigcaps.service.TokenService;
 
 @Configuration
 public class SecurityConfig {
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	public RestJwtFilter restJwtFilter(TokenService tokenService) {
+		return new RestJwtFilter(tokenService);
+	}
+
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http, RestJwtFilter restJwtFilter) throws Exception {
 		http
 				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.csrf(AbstractHttpConfigurer::disable)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/auth/generateToken", "/api/auth/change", "/ws/**", "/api/health/status", "/api/config").permitAll()
+						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+						.requestMatchers(
+								"/auth/authenticate",
+								"/auth/refresh",
+								"/auth/bootstrap",
+								"/api/health/status",
+								"/error",
+								"/",
+								"/index.html",
+								"/assets/**",
+								"/css/**",
+								"/js/**",
+								"/ws/**"
+						).permitAll()
 						.anyRequest().authenticated()
 				)
-				.logout(logout -> logout.logoutSuccessUrl("/"));
+				.addFilterBefore(restJwtFilter, AuthorizationFilter.class)
+				.anonymous(AbstractHttpConfigurer::disable)
+				.formLogin(AbstractHttpConfigurer::disable);
 
 		return http.build();
 	}
@@ -43,15 +65,10 @@ public class SecurityConfig {
 
 		config.setAllowedOriginPatterns(List.of("*"));
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		config.setAllowedHeaders(List.of("*"));
+		config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 		config.setAllowCredentials(true);
 
 		source.registerCorsConfiguration("/**", config);
 		return source;
-	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
 	}
 }

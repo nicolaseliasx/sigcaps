@@ -3,9 +3,9 @@ package sigcaps.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sigcaps.model.document.HistoricoChamados;
-import sigcaps.model.dto.HistoricoChamadosDto;
 import sigcaps.repository.HistoricoChamadosRepository;
+import sigcaps.repository.model.HistoricoChamados;
+import sigcaps.service.model.HistoricoChamadosDto;
 
 @Service
 public class HistoricoChamadosService {
@@ -26,7 +26,7 @@ public class HistoricoChamadosService {
 		dto.setNomePaciente(document.getNomePaciente());
 		dto.setClassificacao(document.getClassificacao());
 		dto.setHorario(document.getHorario());
-		dto.setTipoServico(document.getTipoServico());
+		dto.setTipoServico(document.getTiposServico());
 		return dto;
 	}
 }

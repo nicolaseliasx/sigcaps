@@ -7,14 +7,14 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import sigcaps.api.AuthChannelInterceptor;
+import sigcaps.api.secutiry.WebSocketJwtInterceptor;
 
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Autowired
-	private AuthChannelInterceptor authChannelInterceptor;
+	private WebSocketJwtInterceptor webSocketJwtInterceptor;
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -29,6 +29,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureClientInboundChannel(ChannelRegistration registration) {
-		registration.interceptors(authChannelInterceptor);
+		registration.interceptors(webSocketJwtInterceptor);
 	}
 }

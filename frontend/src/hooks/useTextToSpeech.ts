@@ -1,12 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-
-interface SpeechOptions {
-  pitch?: number;
-  rate?: number;
-  volume?: number;
-}
+import { useConfig } from "../provider/useConfig";
 
 export const useTextToSpeech = () => {
+  const { config } = useConfig();
+
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [isVoiceReady, setIsVoiceReady] = useState<boolean>(false);
 
@@ -35,13 +32,8 @@ export const useTextToSpeech = () => {
   }, [synth, voice]);
 
   const speak = useCallback(
-    (text: string, options: SpeechOptions = {}) => {
-      console.log(options);
-      if (!isVoiceReady) {
-        return;
-      }
-
-      if (!synth || !voice) {
+    (text: string) => {
+      if (!isVoiceReady || !synth || !voice) {
         console.error("Text-to-speech não suportado neste navegador");
         return;
       }
@@ -50,15 +42,17 @@ export const useTextToSpeech = () => {
 
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.voice = voice;
-      utterance.pitch = options.pitch ?? 1;
-      utterance.rate = options.rate ?? 1;
-      utterance.volume = Math.min(1, Math.max(0, (options.volume ?? 1) / 100));
+      utterance.pitch = 1;
+      utterance.rate = 1;
 
-      console.log("Volume ajustado:", utterance.volume);
+      utterance.volume = Math.min(
+        1,
+        Math.max(0, (config?.voiceVolume ?? 100) / 100)
+      );
 
       synth.speak(utterance);
     },
-    [isVoiceReady, synth, voice]
+    [isVoiceReady, synth, voice, config]
   );
 
   return { speak };
