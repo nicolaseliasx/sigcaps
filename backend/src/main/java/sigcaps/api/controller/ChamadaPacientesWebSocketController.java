@@ -7,7 +7,7 @@ import sigcaps.service.ChamadaPacienteService;
 import sigcaps.service.model.ChamadaPacienteDto;
 
 @Controller
-public class WebSocketController {
+public class ChamadaPacientesWebSocketController {
 
 	@Autowired
 	private ChamadaPacienteService chamadaPacienteService;
