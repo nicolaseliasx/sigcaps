@@ -36,25 +36,31 @@ export const useTextToSpeech = () => {
   }, [synth]);
 
   const speak = useCallback(
-    (text: string) => {
+    (text: string, attempt = 1) => {
       if (!isVoiceReady || !synth || !voice) {
-        console.error("Text-to-speech não suportado neste navegador");
+        if (attempt <= 3) {
+          setTimeout(() => speak(text, attempt + 1), 500);
+        } else {
+          console.error(
+            "Falha após 3 tentativas, navegador não suporta o leitor de voz."
+          );
+        }
         return;
       }
 
-      synth.cancel();
+      try {
+        synth.cancel();
 
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.voice = voice;
-      utterance.pitch = 1;
-      utterance.rate = 1;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.voice = voice;
+        utterance.rate = 1;
+        utterance.pitch = 1;
+        utterance.volume = Math.min(1, (config?.voiceVolume ?? 100) / 100);
 
-      utterance.volume = Math.min(
-        1,
-        Math.max(0, (config?.voiceVolume ?? 100) / 100)
-      );
-
-      synth.speak(utterance);
+        synth.speak(utterance);
+      } catch (error) {
+        console.error("Erro ao falar:", error);
+      }
     },
     [isVoiceReady, synth, voice, config]
   );
