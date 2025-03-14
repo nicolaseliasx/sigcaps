@@ -54,7 +54,6 @@ public class RestJwtFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		// parece que ta expirando rapido demais o token verificar
 		String token = authHeader.replace("Bearer ", "");
 		if (!tokenService.validateToken(token)) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido ou expirado");

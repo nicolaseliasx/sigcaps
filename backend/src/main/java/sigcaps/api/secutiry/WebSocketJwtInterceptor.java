@@ -26,9 +26,9 @@ public class WebSocketJwtInterceptor implements ChannelInterceptor {
 			}
 
 			token = token.replace("Bearer ", "");
-			//			if (!tokenService.validateToken(token)) {
-			//				throw new IllegalArgumentException("Token inválido.");
-			//			}
+			if (!tokenService.validateToken(token)) {
+				throw new IllegalArgumentException("Token inválido.");
+			}
 		}
 
 		return message;
