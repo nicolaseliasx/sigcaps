@@ -10,13 +10,15 @@ export const useTextToSpeech = () => {
   const synth = window.speechSynthesis;
 
   useEffect(() => {
-    // nao funciona na primeira vez /n ta saindo som
-
     if ("speechSynthesis" in window) {
       const loadVoices = () => {
         const availableVoices = synth.getVoices();
+
         const selectedVoice =
-          availableVoices.find((voice) => voice.lang === "pt-BR") || null;
+          availableVoices.find(
+            (voice) => voice.lang === "pt-BR" || voice.lang.startsWith("pt-")
+          ) || null;
+
         setVoice(selectedVoice || availableVoices[0]);
         setIsVoiceReady(true);
       };
@@ -31,7 +33,7 @@ export const useTextToSpeech = () => {
         synth.removeEventListener("voiceschanged", loadVoices);
       };
     }
-  }, [synth, voice]);
+  }, [synth]);
 
   const speak = useCallback(
     (text: string) => {
