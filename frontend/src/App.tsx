@@ -1,22 +1,38 @@
-import Navbar from "./components/Navbar";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import PainelChamadasView from "./view/painel/PainelChamadasView";
-import ConfiguracoesView from "./view/configuracoes/ConfiguracoesView";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Navbar } from "./components/Navbar";
+import { ConfigProvider } from "./provider/ConfigProvider";
+import { useConfig } from "./provider/useConfig";
+import PainelChamadasView from "./view/PainelChamadasView";
+import { ThemeProvider, VFlow } from "bold-ui";
+import { useZoom } from "./hooks/useZoom";
 
-function App() {
+function AppContent() {
+  const { config } = useConfig();
+  const fontSize = config?.fontSize || 2;
+  const zoomLevel = useZoom(fontSize);
+
   return (
     <BrowserRouter>
-      <div>
+      <VFlow vSpacing={fontSize} style={{ zoom: zoomLevel }}>
         <Navbar />
-        <div style={{ marginTop: "3rem" }}>
+        {/* melhorar o calculo de espacamento entre navbar e conteudo */}
+        <div style={{ marginTop: `${fontSize}rem`, overflow: "hidden" }}>
           <Routes>
             <Route path="/" element={<PainelChamadasView />} />
-            <Route path="/configuracoes" element={<ConfiguracoesView />} />
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </div>
-      </div>
+      </VFlow>
     </BrowserRouter>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <ConfigProvider>
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
+    </ConfigProvider>
+  );
+}

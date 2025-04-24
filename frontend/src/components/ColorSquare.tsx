@@ -2,22 +2,18 @@ import React from "react";
 
 interface ColorSquareProps {
   color: string;
-  multiplier: number;
+  size: number;
 }
 
-export const ColorSquare: React.FC<ColorSquareProps> = ({
-  color,
-  multiplier,
-}) => {
-  const baseSize = 50;
-
+export const ColorSquare: React.FC<ColorSquareProps> = ({ color, size }) => {
   return (
     <div
       style={{
-        width: `${baseSize * multiplier}px`,
-        height: `${baseSize * multiplier}px`,
+        width: `${size}rem`,
+        height: `${size}rem`,
         backgroundColor: color,
+        borderRadius: "0.5rem",
       }}
-    ></div>
+    />
   );
 };

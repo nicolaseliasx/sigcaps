@@ -1,51 +1,29 @@
-import { HFlow, Button } from "bold-ui";
-import { useNavigate } from "react-router-dom";
+import { useTheme, HFlow, Text } from "bold-ui";
 
-function Navbar() {
-  const navigate = useNavigate();
+import { useConfig } from "../provider/useConfig";
+
+export function Navbar() {
+  const theme = useTheme();
+  const { config } = useConfig();
+
   return (
     <div
       style={{
-        backgroundColor: "#0051A2",
-        color: "#fff",
-        padding: "0.8rem 0.8rem",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
+        width: "100%",
+        backgroundColor: theme.pallete.primary.main,
+        padding: "0.3rem",
+        boxShadow: theme.shadows.outer[40],
         position: "fixed",
         top: 0,
-        width: "100%",
-        zIndex: 1000,
-        boxShadow: "0 5rem 8rem rgba(0, 0, 0, 0.1)",
-        marginLeft: -12,
+        left: 0,
+        zIndex: 2001,
       }}
     >
-      <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: "bold" }}>
-        SIGCAPS
-      </h1>
-
-      <HFlow hSpacing={2} style={{ marginRight: 30, textoColor: "#fff" }}>
-        <Button
-          kind="normal"
-          size="large"
-          skin="ghost"
-          style={{ color: "#fff", fontSize: "1.2rem" }}
-          onClick={() => navigate("/")}
-        >
-          Painel
-        </Button>
-        <Button
-          kind="normal"
-          size="large"
-          skin="ghost"
-          style={{ color: "#fff", fontSize: "1.2rem" }}
-          onClick={() => navigate("/configuracoes")}
-        >
-          Configurações
-        </Button>
+      <HFlow justifyContent="flex-end" style={{ marginRight: "2rem" }}>
+        <Text style={{ color: "white" }} fontSize={3.2}>
+          {config?.installationName ?? " - "}
+        </Text>
       </HFlow>
     </div>
   );
 }
-
-export default Navbar;

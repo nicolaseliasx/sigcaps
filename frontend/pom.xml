@@ -9,6 +9,8 @@
     </parent>
     <name>frontend</name>
     <artifactId>frontend</artifactId>
+
+
     <!--TODO: AVALIAR MELHOR COMO FICA ESSA ESTRUTURA, O QUE DEVE SER MANTIDO E O QUE DEVE SER REMOVIDO-->
     <build>
         <plugins>
@@ -51,9 +53,31 @@
                         <configuration>
                             <arguments>build</arguments>
                             <environmentVariables>
-                                <REACT_APP_VERSION>${project.version}</REACT_APP_VERSION>
-                                <REACT_APP_SPRING_PROFILES_ACTIVE>${spring.profiles.active}</REACT_APP_SPRING_PROFILES_ACTIVE>
+                                <VITE_APP_VERSION>${project.version}</VITE_APP_VERSION>
+                                <VITE_BOOTSTRAP_KEY>${bootstrap.key}</VITE_BOOTSTRAP_KEY>
                             </environmentVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-frontend-build</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>../backend/target/classes/static</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>build</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
@@ -62,5 +86,49 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>generate-api-key</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.gmaven</groupId>
+                        <artifactId>groovy-maven-plugin</artifactId>
+                        <version>2.1.1</version>
+                        <executions>
+                            <execution>
+                                <id>generate-uuid</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <source>
+                                        import java.util.UUID
+
+                                        def uuid = UUID.randomUUID().toString()
+
+                                        def envFile = new File("backend/src/main/resources/.env")
+                                        def content = envFile.exists() ? envFile.text : ""
+
+                                        if (content.contains("BOOTSTRAP_KEY=")) {
+                                            content = content.replaceAll(/BOOTSTRAP_KEY=.*/, "BOOTSTRAP_KEY=${uuid}")
+                                        } else {
+                                            content += "BOOTSTRAP_KEY=${uuid}\n"
+                                        }
+
+                                        envFile.text = content
+
+                                        project.properties.setProperty('bootstrap.key', uuid)
+                                    </source>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
