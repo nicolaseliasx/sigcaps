@@ -1,6 +1,7 @@
 package sigcaps.service;
 
 import java.util.List;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sigcaps.repository.HistoricoChamadosRepository;
@@ -19,14 +20,5 @@ public class HistoricoChamadosService {
 
 	public List<HistoricoChamados> getUltimos10Registros() {
 		return repository.findTop10ByOrderByIdDesc();
-	}
-
-	public HistoricoChamadosDto convertToDto(HistoricoChamados document) {
-		HistoricoChamadosDto dto = new HistoricoChamadosDto();
-		dto.setNomePaciente(document.getNomePaciente());
-		dto.setClassificacao(document.getClassificacao());
-		dto.setHorario(document.getHorario());
-		dto.setTipoServico(document.getTiposServico());
-		return dto;
 	}
 }

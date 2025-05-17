@@ -1,3 +1,5 @@
+import { gray, red, yellow, green, blue } from "bold-ui/lib/styles/colors";
+
 export enum RiscoClassificacao {
   NAO_CLASSIFICADO = "NAO_CLASSIFICADO",
   ALTA = "ALTA",
@@ -12,23 +14,23 @@ export const riscoRecord: Record<
 > = {
   [RiscoClassificacao.NAO_CLASSIFICADO]: {
     nome: "Não classificado",
-    color: "#F0F0F5",
+    color: gray.c70,
   },
   [RiscoClassificacao.ALTA]: {
     nome: "Alta",
-    color: "#FF0000",
+    color: red.c40,
   },
   [RiscoClassificacao.MEDIA]: {
     nome: "Média",
-    color: "#FFFF00",
+    color: yellow.c70,
   },
   [RiscoClassificacao.BAIXA]: {
     nome: "Baixa",
-    color: "#00FF00",
+    color: green.c40,
   },
   [RiscoClassificacao.NAO_AGUDA]: {
     nome: "Não aguda",
-    color: "#0077E1",
+    color: blue.c40,
   },
 };
 

@@ -6,13 +6,15 @@ import { formatDatePainel, idToRiscoClassificacao } from "./painel-utils";
 import { useWebSocket } from "../hooks/useWebSocket";
 import { useTextToSpeech } from "../hooks/useTextToSpeech";
 import { useEffect, useState } from "react";
-import { useConfig } from "../provider/useConfig";
+import { useConfig } from "../provider/config/useConfig";
+import { useAuth } from "../provider/auth/useAuth";
 import { Box } from "../components/layout/Box";
 import { ColorSquare } from "../components/ColorSquare";
 import { HistoricoTable } from "./components/HistoricoTable";
 
 export default function PainelChamadasView() {
-  const { config, serverUrl } = useConfig();
+  const { config } = useConfig();
+  const { serverUrl } = useAuth();
 
   const voiceVolume = config?.voiceVolume ?? 1;
   const { speak } = useTextToSpeech();
@@ -58,23 +60,19 @@ export default function PainelChamadasView() {
                 <Text fontSize={2} fontWeight="bold">
                   Classificação de risco
                 </Text>
-                <HFlow alignItems="center">
-                  <ColorSquare
-                    color={
-                      riscoRecord[
-                        idToRiscoClassificacao(chamadaPaciente.classificacao)
-                      ].color
-                    }
-                    size={3.2}
-                  />
-                  <Text fontSize={2}>
-                    {
-                      riscoRecord[
-                        idToRiscoClassificacao(chamadaPaciente.classificacao)
-                      ].nome
-                    }
-                  </Text>
-                </HFlow>
+
+                {(() => {
+                  const riscoId = idToRiscoClassificacao(
+                    chamadaPaciente?.classificacao ?? ""
+                  );
+                  const risco = riscoRecord[riscoId];
+                  return (
+                    <HFlow alignItems="center">
+                      <ColorSquare color={risco.color} size={3.2} />
+                      <Text fontSize={2}>{risco.nome}</Text>
+                    </HFlow>
+                  );
+                })()}
               </VFlow>
             </Box>
             <Box style={{ margin: "0", flex: "1", padding: "1rem 2rem" }}>
@@ -94,10 +92,9 @@ export default function PainelChamadasView() {
           <Text fontSize={2} fontWeight="bold">
             Histórico de chamadas
           </Text>
-          {chamadaPaciente?.historico &&
-            chamadaPaciente.historico.length > 0 && (
-              <HistoricoTable historico={chamadaPaciente.historico} />
-            )}
+          {chamadaPaciente?.historico?.length > 0 && (
+            <HistoricoTable historico={chamadaPaciente.historico} />
+          )}
         </VFlow>
       </VFlow>
     </PageContent>

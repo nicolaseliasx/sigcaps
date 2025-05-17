@@ -1,10 +1,11 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
-import { ConfigProvider } from "./provider/ConfigProvider";
-import { useConfig } from "./provider/useConfig";
+import { ConfigProvider } from "./provider/config/ConfigProvider";
+import { useConfig } from "./provider/config/useConfig";
 import PainelChamadasView from "./view/PainelChamadasView";
 import { ThemeProvider, VFlow } from "bold-ui";
 import { useZoom } from "./hooks/useZoom";
+import { AuthProvider } from "./provider/auth/AuthProvider";
 
 function AppContent() {
   const { config } = useConfig();
@@ -29,10 +30,12 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ConfigProvider>
-      <ThemeProvider>
-        <AppContent />
-      </ThemeProvider>
-    </ConfigProvider>
+    <AuthProvider>
+      <ConfigProvider>
+        <ThemeProvider>
+          <AppContent />
+        </ThemeProvider>
+      </ConfigProvider>
+    </AuthProvider>
   );
 }
