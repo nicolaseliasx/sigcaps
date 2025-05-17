@@ -107,9 +107,8 @@ export default function PainelChamadasView() {
           alignItems: "center",
         }}
       >
-        {/* MELHORAR MENSAGEM */}
         <Text fontSize={2} fontWeight="bold">
-          Nenhum dado disponível no momento. Aguardando a conexão e envio.
+          Nenhum paciente foi chamado ainda. Aguardando próximas chamadas.
         </Text>
       </VFlow>
     </PageContent>

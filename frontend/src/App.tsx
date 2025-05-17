@@ -16,7 +16,6 @@ function AppContent() {
     <BrowserRouter>
       <VFlow vSpacing={fontSize} style={{ zoom: zoomLevel }}>
         <Navbar />
-        {/* melhorar o calculo de espacamento entre navbar e conteudo */}
         <div style={{ marginTop: `${fontSize}rem`, overflow: "hidden" }}>
           <Routes>
             <Route path="/" element={<PainelChamadasView />} />
