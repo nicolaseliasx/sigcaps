@@ -135,7 +135,7 @@ class AuthServiceTest {
 	@Test
 	void bootstrap_RetornaNullQuandoChaveInvalida() {
 		Dotenv mockDotenv = mock(Dotenv.class);
-		when(mockDotenv.get("BOOTSTRAP_KEY")).thenReturn(BOOTSTRAP_KEY); // Chave correta
+		when(mockDotenv.get("BOOTSTRAP_KEY")).thenReturn(BOOTSTRAP_KEY);
 		ReflectionTestUtils.setField(authService, "dotenv", mockDotenv);
 
 		BootstrapStatus status = new BootstrapStatus();

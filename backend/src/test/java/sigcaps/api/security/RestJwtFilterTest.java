@@ -87,7 +87,6 @@ class RestJwtFilterTest {
 	void deveRetornarNaoAutorizado_QuandoCabecalhoAuthorizationAusente() throws Exception {
 		request.setRequestURI("/api/protegido");
 
-		// Chamada ao método público que invoca o protegido
 		restJwtFilter.doFilter(request, response, filterChain);
 
 		assertEquals(401, response.getStatus());
