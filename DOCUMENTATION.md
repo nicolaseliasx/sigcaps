@@ -4,9 +4,9 @@ Bem-vindo à documentação da API do Sistema Inteligente de Gestão de Chamadas
 
 ## 1\. Visão Geral
 
-O SIGCAPS (Sistema Inteligente de Gestão de Chamadas de Pacientes para Atenção Primária em Saúde) é uma solução computacional robusta e acessível, destinada a automatizar e otimizar o processo de chamada de pacientes em Unidades Básicas de Saúde (UBS)[cite: 13, 47]. Seu objetivo principal é criar uma solução tecnológica para otimizar este processo, facilitando sua integração com sistemas como o Prontuário Eletrônico do Cidadão (PEC) e outros sistemas de gestão em saúde[cite: 13, 47].
+O SIGCAPS (Sistema Inteligente de Gestão de Chamadas de Pacientes para Atenção Primária em Saúde) é uma solução computacional robusta e acessível, destinada a automatizar e otimizar o processo de chamada de pacientes em Unidades Básicas de Saúde (UBS). Seu objetivo principal é criar uma solução tecnológica para otimizar este processo, facilitando sua integração com sistemas como o Prontuário Eletrônico do Cidadão (PEC) e outros sistemas de gestão em saúde.
 
-O sistema foi concebido com uma arquitetura moderna cliente-servidor, que emprega interfaces de programação de aplicações (APIs) RESTful para gerenciamento e configuração, e tecnologias de comunicação em tempo real (WebSockets) para suas funcionalidades dinâmicas de chamada de pacientes[cite: 14]. O SIGCAPS efetiva a chamada automatizada de pacientes com exibição em painéis configuráveis e anúncios por leitura em voz alta, priorizando a acessibilidade e a inclusão[cite: 15].
+O sistema foi concebido com uma arquitetura moderna cliente-servidor, que emprega interfaces de programação de aplicações (APIs) RESTful para gerenciamento e configuração, e tecnologias de comunicação em tempo real (WebSockets) para suas funcionalidades dinâmicas de chamada de pacientes. O SIGCAPS efetiva a chamada automatizada de pacientes com exibição em painéis configuráveis e anúncios por leitura em voz alta, priorizando a acessibilidade e a inclusão.
 
 Esta API permite que aplicações terceiras autenticadas:
 
@@ -34,11 +34,9 @@ Para desenvolvedores ou ferramentas que necessitam da especificação técnica b
 * **URL da Especificação JSON:** `http://localhost:8081/v3/api-docs`
     * *(Observação: Ajuste a porta e o caminho de contexto, se aplicável, como mencionado acima.)*
 
-Este arquivo JSON é o "contrato" da API REST e pode ser utilizado para gerar bibliotecas cliente em diversas linguagens de programação, analisar a estrutura da API ou para outras ferramentas de desenvolvimento.
-
 ## 4. Autenticação na API (Detalhado)
 
-Para interagir com a maioria dos endpoints da API do SIGCAPS (exceto os endpoints públicos como os de documentação `/v3/api-docs/**`, `/swagger-ui/**` e o health check `/api/health/status`), uma aplicação terceira precisa se autenticar. O SIGCAPS utiliza um mecanismo de autenticação robusto para garantir que apenas clientes autorizados possam enviar dados ou modificar configurações.
+Para interagir com a maioria dos endpoints da API do SIGCAPS (exceto os endpoints públicos como os de documentação `/v3/api-docs/**`, `/swagger-ui/**` e o health check `/api/health/status`), uma aplicação terceira precisa se autenticar. O SIGCAPS utiliza um mecanismo de autenticação para garantir que apenas clientes autorizados possam enviar dados ou modificar configurações.
 
 Este processo envolve uma chave de acesso inicial (`accessKey`), a geração de uma "contra-chave" (`clientSignature`) pela aplicação cliente, e, subsequentemente, a obtenção e uso de um Token JWT (JSON Web Token) para as requisições subsequentes.
 
@@ -46,47 +44,47 @@ Este processo envolve uma chave de acesso inicial (`accessKey`), a geração de 
 
 1.  **Obtenção da `accessKey` Inicial:**
 
-    * Na primeira inicialização do SIGCAPS, o sistema gera automaticamente uma `accessKey` única[cite: 401]. Esta chave é armazenada de forma segura no banco de dados do SIGCAPS[cite: 401].
-    * Um administrador do sistema SIGCAPS é responsável por obter esta `accessKey` (por exemplo, através de consulta direta ao banco de dados ou por um futuro mecanismo administrativo seguro) e fornecê-la à aplicação terceira que necessita de integração[cite: 402]. Esta chave é o primeiro segredo compartilhado.
+    * Na primeira inicialização do SIGCAPS, o sistema gera automaticamente uma `accessKey` única. Esta chave é armazenada de forma segura no banco de dados do SIGCAPS.
+    * Um administrador do sistema SIGCAPS é responsável por obter esta `accessKey` (por exemplo, através de consulta direta ao banco de dados ou por um futuro mecanismo administrativo seguro) e fornecê-la à aplicação terceira que necessita de integração]. Esta chave é o primeiro segredo compartilhado.
 
 2.  **Geração da `secretKey` Derivada (Implementado pela Aplicação Terceira):**
 
-    * A aplicação terceira, de posse da `accessKey` original, deve gerar uma primeira chave secreta intermediária, referida como `secretKey` derivada[cite: 403].
+    * A aplicação terceira, de posse da `accessKey` original, deve gerar uma primeira chave secreta intermediária, referida como `secretKey` derivada.
     * **Algoritmo para gerar a `secretKey`:**
-        * **Cálculo HMAC:** Utilize o algoritmo HMAC-SHA256[cite: 404].
-        * **Dado a ser assinado (input para o HMAC):** É a concatenação da `accessKey` original com o sufixo estático `"-sigcaps"`[cite: 404]. (Exemplo: Se a `accessKey` for `suaAccessKeyOriginal123`, o dado a ser assinado será `suaAccessKeyOriginal123-sigcaps`).
-        * **Chave para a operação HMAC:** A própria `accessKey` original[cite: 405].
-        * **Codificação do Resultado:** O resultado binário da assinatura HMAC-SHA256 deve ser codificado em Base64 URL-safe (sem padding) para formar a `secretKey` derivada[cite: 406].
+        * **Cálculo HMAC:** Utilize o algoritmo HMAC-SHA256.
+        * **Dado a ser assinado (input para o HMAC):** É a concatenação da `accessKey` original com o sufixo estático `"-sigcaps"`. (Exemplo: Se a `accessKey` for `suaAccessKeyOriginal123`, o dado a ser assinado será `suaAccessKeyOriginal123-sigcaps`).
+        * **Chave para a operação HMAC:** A própria `accessKey` original.
+        * **Codificação do Resultado:** O resultado binário da assinatura HMAC-SHA256 deve ser codificado em Base64 URL-safe (sem padding) para formar a `secretKey` derivada.
 
 3.  **Geração da `clientSignature` (Contra-Chave Final - Implementado pela Aplicação Terceira):**
 
-    * Utilizando a `secretKey` derivada (gerada no passo anterior) como chave, a aplicação terceira deve calcular uma nova assinatura HMAC-SHA256[cite: 407]. Esta segunda assinatura é a `clientSignature` final, ou "contra-chave".
+    * Utilizando a `secretKey` derivada (gerada no passo anterior) como chave, a aplicação terceira deve calcular uma nova assinatura HMAC-SHA256. Esta segunda assinatura é a `clientSignature` final, ou "contra-chave".
     * **Algoritmo para gerar a `clientSignature`:**
-        * **Cálculo HMAC:** Utilize o algoritmo HMAC-SHA256[cite: 407].
-        * **Dado a ser assinado (input para o HMAC):** Uma string fixa, o desafio `SIGCAPS-AUTH`[cite: 408].
-        * **Chave para a operação HMAC:** A `secretKey` derivada no passo anterior[cite: 407].
-        * **Codificação do Resultado:** O resultado binário desta segunda assinatura HMAC-SHA256 também deve ser codificado em Base64 URL-safe (sem padding)[cite: 409]. O resultado é a `clientSignature`[cite: 409].
+        * **Cálculo HMAC:** Utilize o algoritmo HMAC-SHA256.
+        * **Dado a ser assinado (input para o HMAC):** Uma string fixa, o desafio `SIGCAPS-AUTH`.
+        * **Chave para a operação HMAC:** A `secretKey` derivada no passo anterior.
+        * **Codificação do Resultado:** O resultado binário desta segunda assinatura HMAC-SHA256 também deve ser codificado em Base64 URL-safe (sem padding). O resultado é a `clientSignature`.
 
 4.  **Obtenção do Token JWT:**
 
-    * A aplicação terceira realiza uma requisição `POST` para o endpoint de autenticação do SIGCAPS: `/auth/authenticate`[cite: 411, 471].
+    * A aplicação terceira realiza uma requisição `POST` para o endpoint de autenticação do SIGCAPS: `/auth/authenticate`.
     * O corpo desta requisição deve conter a `clientSignature` gerada no passo anterior.
-    * O `AuthController` do SIGCAPS recebe esta `clientSignature` e o `AuthService` valida se o cálculo está correto em relação à `accessKey` original armazenada[cite: 412, 483].
-    * Se a `clientSignature` for válida, o SIGCAPS (através do `TokenService`) gera um Token JWT e um `refreshToken`[cite: 413, 471, 484]. Estes são retornados no corpo da resposta da requisição.
+    * O `AuthController` do SIGCAPS recebe esta `clientSignature` e o `AuthService` valida se o cálculo está correto em relação à `accessKey` original armazenada.
+    * Se a `clientSignature` for válida, o SIGCAPS (através do `TokenService`) gera um Token JWT e um `refreshToken`. Estes são retornados no corpo da resposta da requisição.
 
 5.  **Usando o Token JWT:**
 
-    * Após obter o Token JWT, a aplicação terceira deve incluí-lo em todas as suas requisições subsequentes aos endpoints protegidos do SIGCAPS[cite: 414].
+    * Após obter o Token JWT, a aplicação terceira deve incluí-lo em todas as suas requisições subsequentes aos endpoints protegidos do SIGCAPS.
     * O token JWT deve ser enviado no cabeçalho `Authorization` da requisição HTTP, precedido pelo esquema `Bearer`.
-    * **Formato do Cabeçalho:** `Authorization: Bearer <SEU_TOKEN_JWT>`[cite: 503].
-    * O `RestJwtFilter` do SIGCAPS interceptará essas requisições, validará o JWT (presença, formato e validade usando o `TokenService`)[cite: 503, 504], e configurará o contexto de segurança do Spring se o token for válido.
+    * **Formato do Cabeçalho:** `Authorization: Bearer <SEU_TOKEN_JWT>`.
+    * O `RestJwtFilter` do SIGCAPS interceptará essas requisições, validará o JWT (presença, formato e validade usando o `TokenService`), e configurará o contexto de segurança do Spring se o token for válido.
     * O mesmo JWT deve ser usado para autenticar conexões WebSocket, conforme detalhado na próxima seção.
 
 <!-- end list -->
 
 * **Renovação de Token:**
     * O JWT tem um tempo de expiração. Quando expirar, a aplicação terceira pode usar o `refreshToken` (obtido junto com o JWT inicial) para solicitar um novo par de JWT/refreshToken.
-    * Para isso, deve-se fazer uma requisição ao endpoint `/auth/refresh`[cite: 472], enviando o `refreshToken`.
+    * Para isso, deve-se fazer uma requisição ao endpoint `/auth/refresh`, enviando o `refreshToken`.
 
 *Para detalhes exatos sobre os corpos de requisição e resposta dos endpoints `/auth/authenticate` e `/auth/refresh`, consulte a Swagger UI.*
 
@@ -98,9 +96,7 @@ O SIGCAPS utiliza WebSockets, com o protocolo STOMP (Simple Text Oriented Messag
 
 * **URL para Conexão Inicial:** As aplicações cliente devem estabelecer uma conexão WebSocket com o servidor SIGCAPS no seguinte endpoint:
     * `/ws`
-    * **Exemplo de URL completa:** `ws://localhost:8081/ws` (para conexões não seguras) ou `wss://localhost:8081/ws` (para conexões seguras, se configurado).
-        * *(Lembre-se de ajustar a porta e o host conforme o ambiente de implantação do SIGCAPS.)*
-* Internamente, o SIGCAPS utiliza SockJS como um transporte de fallback, mas a interação principal para clientes STOMP é sobre o endpoint WebSocket estabelecido.
+    * **Exemplo de URL completa:** `ws://localhost:8081/ws`
 
 ### 5.2 Autenticação na Conexão WebSocket
 
@@ -109,7 +105,7 @@ O SIGCAPS utiliza WebSockets, com o protocolo STOMP (Simple Text Oriented Messag
     * O token deve ser incluído em um cabeçalho da mensagem `CONNECT` do STOMP. O cabeçalho padrão esperado pelo `WebSocketJwtInterceptor` do SIGCAPS é:
         * `Authorization: Bearer <SEU_TOKEN_JWT>`
     * Bibliotecas cliente STOMP (como StompJS) geralmente permitem a especificação de cabeçalhos de conexão (ex: `connectHeaders`).
-* **Validação:** O `WebSocketJwtInterceptor` no back-end do SIGCAPS interceptará o frame `CONNECT`, extrairá o token JWT do cabeçalho `Authorization` e o validará usando o `TokenService`[cite: 506, 507]. Se o token estiver ausente, for inválido ou expirado, a conexão STOMP será rejeitada e não será estabelecida[cite: 508].
+* **Validação:** O `WebSocketJwtInterceptor` no back-end do SIGCAPS interceptará o frame `CONNECT`, extrairá o token JWT do cabeçalho `Authorization` e o validará usando o `TokenService`. Se o token estiver ausente, for inválido ou expirado, a conexão STOMP será rejeitada e não será estabelecida.
 
 ### 5.3 Tópicos Principais para Interação via STOMP
 
@@ -117,26 +113,26 @@ Uma vez que a conexão STOMP autenticada é estabelecida, as aplicações podem 
 
 * **Envio de Chamada de Paciente (Realizado por uma Aplicação Terceira):**
 
-    * **Destino STOMP para Envio:** `/app/chamadaPaciente` [cite: 475]
+    * **Destino STOMP para Envio:** `/app/chamadaPaciente`
     * **Propósito:** Aplicações externas (como o PEC) enviam uma mensagem para este destino para solicitar que o SIGCAPS processe e anuncie uma nova chamada de paciente.
-    * **Corpo da Mensagem:** Um objeto JSON representando o `ChamadaPacienteDto`. Este DTO deve conter os detalhes do paciente a ser chamado. Os campos principais incluem[cite: 372, 373, 374, 600]:
+    * **Corpo da Mensagem:** Um objeto JSON representando o `ChamadaPacienteDto`. Este DTO deve conter os detalhes do paciente a ser chamado. Os campos principais incluem:
         * `nomePaciente` (String): Nome completo ou nome social do cidadão.
         * `classificacao` (Integer): Um valor numérico representando a classificação de risco do paciente. A interpretação exata deste valor deve ser consistente com a lógica do SIGCAPS (ex: mapeamento para cores/prioridades).
         * `tipoServico` (String): Descrição do tipo de atendimento ou serviço para o qual o paciente está sendo direcionado (ex: "Consulta Médica", "Vacinação", "Triagem").
-    * **Processamento no Back-end:** O `ChamadaPacientesWebSocketController` recebe esta mensagem[cite: 475]. O `ChamadaPacienteService` então processa a chamada, registra-a no histórico [cite: 489] e publica as informações da chamada para os clientes inscritos no tópico `/topic/chamadaPaciente`[cite: 490].
+    * **Processamento no Back-end:** O `ChamadaPacientesWebSocketController` recebe esta mensagem. O `ChamadaPacienteService` então processa a chamada, registra-a no histórico e publica as informações da chamada para os clientes inscritos no tópico `/topic/chamadaPaciente`.
 
 * **Recebimento de Novas Chamadas no Painel (Subscrição pelo Front-end SIGCAPS ou Outros Clientes):**
 
-    * **Tópico STOMP para Subscrição:** `/topic/chamadaPaciente` [cite: 197, 452, 490]
+    * **Tópico STOMP para Subscrição:** `/topic/chamadaPaciente`
     * **Propósito:** Aplicações cliente (principalmente o painel de exibição do SIGCAPS) devem se inscrever neste tópico para receber atualizações em tempo real sempre que uma nova chamada de paciente for processada e publicada pelo servidor.
-    * **Mensagem Recebida:** O formato da mensagem publicada neste tópico conterá os detalhes da chamada processada, permitindo que o painel exiba o nome do paciente, tipo de atendimento, classificação e também atualize o histórico de chamadas recentes[cite: 452, 540].
+    * **Mensagem Recebida:** O formato da mensagem publicada neste tópico conterá os detalhes da chamada processada, permitindo que o painel exiba o nome do paciente, tipo de atendimento, classificação e também atualize o histórico de chamadas recentes.
 
 * **Recebimento de Atualizações de Configuração (Subscrição pelo Front-end SIGCAPS ou Outros Clientes):**
 
-    * **Tópico STOMP para Subscrição:** `/topic/config/load` [cite: 197, 453, 493]
+    * **Tópico STOMP para Subscrição:** `/topic/config/load`
     * **Propósito:** Clientes (como o painel de exibição do SIGCAPS) podem se inscrever neste tópico para receber notificações quando as configurações do sistema (ex: tamanho da fonte do painel, volume da voz) forem alteradas.
-    * **Gatilho:** Quando um administrador atualiza as configurações do SIGCAPS através da API REST (endpoint `/api/config`), o `ConfigService` no back-end, após salvar as novas configurações, publica o objeto `ConfigDto` atualizado neste tópico[cite: 493, 561].
-    * **Mensagem Recebida:** Um objeto JSON representando o `ConfigDto` com as configurações mais recentes do sistema. Isso permite que os painéis de exibição ajustem sua aparência e comportamento dinamicamente sem a necessidade de recarregar a página[cite: 453, 562].
+    * **Gatilho:** Quando um administrador atualiza as configurações do SIGCAPS através da API REST (endpoint `/api/config`), o `ConfigService` no back-end, após salvar as novas configurações, publica o objeto `ConfigDto` atualizado neste tópico
+    * **Mensagem Recebida:** Um objeto JSON representando o `ConfigDto` com as configurações mais recentes do sistema. Isso permite que os painéis de exibição ajustem sua aparência e comportamento dinamicamente sem a necessidade de recarregar a página
 
 <!-- end list -->
 
@@ -260,16 +256,16 @@ A seguir, uma breve descrição dos principais DTOs (Data Transfer Objects) util
     * Representa os dados de um paciente a ser chamado pelo sistema.
     * **Campos principais:**
         * `nomePaciente` (String): Nome completo ou nome social do cidadão a ser chamado.
-        * `classificacao` (Integer): Um valor numérico que representa a classificação de risco do paciente. A interpretação exata deste índice (ex: 0 para 'Vermelho/Alta Prioridade', 1 para 'Amarelo/Média Prioridade', etc.) deve ser consistente entre a aplicação cliente e a lógica do servidor SIGCAPS. [cite: 602]
-        * `tipoServico` (String): Uma descrição textual do tipo de atendimento ou serviço para o qual o paciente está sendo direcionado (ex: "Consulta Médica", "Vacinação", "Triagem", "Exames"). [cite: 374, 603]
+        * `classificacao` (Integer): Um valor numérico que representa a classificação de risco do paciente. A interpretação exata deste índice (ex: 0 para 'Vermelho/Alta Prioridade', 1 para 'Amarelo/Média Prioridade', etc.) deve ser consistente entre a aplicação cliente e a lógica do servidor SIGCAPS.
+        * `tipoServico` (String): Uma descrição textual do tipo de atendimento ou serviço para o qual o paciente está sendo direcionado (ex: "Consulta Médica", "Vacinação", "Triagem", "Exames"). 
 
 * **`ConfigDto`** (usado na API REST `/api/config` e no tópico WebSocket `/topic/config/load`):
 
     * Representa as configurações do sistema SIGCAPS que podem ser gerenciadas externamente.
     * **Campos principais:**
-        * `tamanhoFonte` (Integer): Define o tamanho da fonte a ser utilizado no painel de exibição das chamadas. [cite: 376, 618]
-        * `volumeVoz` (Integer): Controla o volume da leitura em voz alta das chamadas (ex: um valor entre 0 e 100). [cite: 377, 618]
-        * `nomeInstalacao` (String): O nome da unidade de saúde ou da instalação que será exibido no painel de chamadas. [cite: 597, 618]
+        * `tamanhoFonte` (Integer): Define o tamanho da fonte a ser utilizado no painel de exibição das chamadas.
+        * `volumeVoz` (Integer): Controla o volume da leitura em voz alta das chamadas (ex: um valor entre 0 e 100).
+        * `nomeInstalacao` (String): O nome da unidade de saúde ou da instalação que será exibido no painel de chamadas.
 
 * **DTOs de Autenticação** (usados nos endpoints REST `/auth/authenticate` e `/auth/refresh`):
 
