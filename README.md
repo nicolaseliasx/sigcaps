@@ -36,7 +36,7 @@ Certifique-se de ter as seguintes ferramentas instaladas em seu sistema com as v
     docker compose up -d
     ```
 
-    O comando `up` inicia os contêineres definidos no arquivo `docker-compose.yml` (incluindo o MongoDB). A flag `-d` executa os contêineres em modo "detached" (em segundo plano). Aguarde alguns instantes para que o banco de dados seja inicializado completamente.
+    O comando `up` inicia os contêineres definidos no arquivo `compose.yml` (incluindo o MongoDB). A flag `-d` executa os contêineres em modo "detached" (em segundo plano). Aguarde alguns instantes para que o banco de dados seja inicializado completamente.
 
 3.  **Executar o Backend da Aplicação SIGCAPS:**
     Após a compilação do projeto e com o banco de dados em execução, você pode iniciar o backend da aplicação SIGCAPS. No diretório raiz do projeto, execute o seguinte comando:
