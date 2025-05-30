@@ -10,16 +10,13 @@
     <name>frontend</name>
     <artifactId>frontend</artifactId>
 
-
-    <!--TODO: AVALIAR MELHOR COMO FICA ESSA ESTRUTURA, O QUE DEVE SER MANTIDO E O QUE DEVE SER REMOVIDO-->
     <build>
         <plugins>
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.10.0</version> <!-- Certifique-se de que a versão está correta -->
+                <version>1.10.0</version>
                 <executions>
-                    <!-- Instala Node e Yarn -->
                     <execution>
                         <id>install-node-and-yarn</id>
                         <goals>
@@ -31,7 +28,6 @@
                         </configuration>
                     </execution>
 
-                    <!-- Executa 'yarn install' para instalar as dependências -->
                     <execution>
                         <id>yarn-install</id>
                         <goals>
@@ -43,7 +39,6 @@
                         </configuration>
                     </execution>
 
-                    <!-- Executa 'yarn build' para compilar o frontend -->
                     <execution>
                         <id>yarn-build</id>
                         <goals>
