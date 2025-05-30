@@ -13,7 +13,7 @@ Certifique-se de ter as seguintes ferramentas instaladas em seu sistema com as v
 * **Java JDK:** Versão 17
 * **Apache Maven:** Versão 3.9.3
 * **Docker:** Versão estável mais recente recomendada.
-* **Docker Compose:** Versão estável mais recente recomendada (geralmente incluído na instalação do Docker Desktop).
+* **Docker Compose:** Versão estável mais recente recomendada (geralmente incluído na instalação do Docker).
 
 -----
 
@@ -44,8 +44,6 @@ Certifique-se de ter as seguintes ferramentas instaladas em seu sistema com as v
     ```bash
     mvn spring-boot:run -pl backend
     ```
-
-    A flag `-pl backend` especifica que o Maven deve executar o módulo `backend` do projeto, onde a aplicação Spring Boot principal reside. Aguarde até que o Spring Boot inicialize completamente. Você verá logs indicando que a aplicação está rodando (geralmente na porta 8081, conforme configurado).
 
 4.  **Acessar a Aplicação (Front-end/Painel de Chamadas):**
     Uma vez que o backend esteja em execução, o painel de chamadas do SIGCAPS (front-end) estará acessível através do seu navegador web no seguinte endereço:
