@@ -1,6 +1,6 @@
 import { useTheme, HFlow, Text } from "bold-ui";
 
-import { useConfig } from "../provider/useConfig";
+import { useConfig } from "../provider/config/useConfig";
 
 export function Navbar() {
   const theme = useTheme();

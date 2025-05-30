@@ -4,6 +4,8 @@ import { riscoRecord } from "../painel-model";
 import { titleCase } from "../../utils/utils";
 import { idToRiscoClassificacao } from "../painel-utils";
 import { ColorSquare } from "../../components/ColorSquare";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface HistoricoRow {
   id: number;
@@ -36,11 +38,7 @@ const convertHistoricoToRows = (
 
     return {
       id: index,
-      horario: new Date(item.horario).toLocaleTimeString("pt-BR", {
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      horario: format(new Date(item.horario), "HH:mm", { locale: ptBR }),
       nomePaciente: titleCase(item.nomePaciente),
       classificacao: classificacaoValida,
       tipoServico: item.tipoServico ?? [],
@@ -57,7 +55,6 @@ export function HistoricoTable({ historico }: HistoricoTableProps) {
       rows={rows}
       sort={sort}
       onSortChange={setSort}
-      loading={false}
       columns={[
         {
           name: "horario",

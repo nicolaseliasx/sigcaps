@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import io.github.cdimascio.dotenv.Dotenv;
+import jakarta.annotation.PostConstruct;
 import sigcaps.repository.AuthKeyRepository;
 import sigcaps.repository.BootstrapStatusRepository;
 import sigcaps.repository.model.AuthKey;
@@ -22,10 +23,10 @@ import sigcaps.service.model.AuthResponseDto;
 @Service
 public class AuthService {
 
-	private static final String UNIQUE_ID_AUTH = "sigcaps-primary-key-auth";
-	private static final String UNIQUE_ID_BOOTSTRAP = "sigcaps-primary-key-bootstrap_status";
-	private static final String HMAC_ALGORITHM = "HmacSHA256";
-	private static final String FIXED_CHALLENGE = "SIGCAPS-AUTH";
+	protected static final String UNIQUE_ID_AUTH = "sigcaps-primary-key-auth";
+	protected static final String UNIQUE_ID_BOOTSTRAP = "sigcaps-primary-key-bootstrap_status";
+	protected static final String HMAC_ALGORITHM = "HmacSHA256";
+	protected static final String FIXED_CHALLENGE = "SIGCAPS-AUTH";
 
 	@Autowired
 	private AuthKeyRepository authKeyRepository;
@@ -36,7 +37,13 @@ public class AuthService {
 	@Autowired
 	private TokenService tokenService;
 
-	private static final Dotenv dotenv = Dotenv.load();
+
+	private Dotenv dotenv;
+
+	@PostConstruct
+	public void init() {
+		this.dotenv = Dotenv.load();
+	}
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void onApplicationReady() {
@@ -68,7 +75,7 @@ public class AuthService {
 		return generateTokens(accessKey);
 	}
 
-	private AuthResponseDto generateTokens(String accessKey) {
+	protected AuthResponseDto generateTokens(String accessKey) {
 		String jwtToken = tokenService.generateToken(accessKey);
 		String refreshToken = tokenService.generateRefreshToken(accessKey);
 
@@ -79,7 +86,7 @@ public class AuthService {
 		return dto;
 	}
 
-	private String computeHmac(String secretKey) {
+	protected static String computeHmac(String secretKey) {
 		try {
 			Mac mac = Mac.getInstance(HMAC_ALGORITHM);
 			SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(), HMAC_ALGORITHM);
@@ -94,8 +101,8 @@ public class AuthService {
 	public AuthResponseDto bootstrap(String bootstrapKey) {
 		BootstrapStatus status = bootstrapStatusRepository.findById(UNIQUE_ID_BOOTSTRAP)
 				.orElseThrow(() -> new RuntimeException("BootstrapStatus não encontrado."));
-
-		if (!status.isUsed() && Objects.equals(bootstrapKey, dotenv.get("BOOTSTRAP_KEY"))) {
+		String bootstrap = this.dotenv.get("BOOTSTRAP_KEY");
+		if (!status.isUsed() && Objects.equals(bootstrapKey, bootstrap)) {
 			BootstrapStatus newBootstrapStatus = new BootstrapStatus();
 			newBootstrapStatus.setId(UNIQUE_ID_BOOTSTRAP);
 			newBootstrapStatus.setUsed(true);
@@ -150,7 +157,7 @@ public class AuthService {
 		return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
 	}
 
-	public static String generateSecretKey(String accessKey) {
+	protected static String generateSecretKey(String accessKey) {
 		try {
 			Mac mac = Mac.getInstance(HMAC_ALGORITHM);
 			SecretKeySpec keySpec = new SecretKeySpec(accessKey.getBytes(), HMAC_ALGORITHM);

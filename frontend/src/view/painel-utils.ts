@@ -21,12 +21,6 @@ export function idToRiscoClassificacao(
   }
 }
 
-export const formatDatePainel = (date: Date): string => {
-  const formattedDate = format(date, "dd 'de' MMMM 'de' yyyy", {
-    locale: ptBR,
-  });
-
-  const formattedTime = format(date, "HH:mm");
-
-  return `${formattedDate} - ${formattedTime}`;
-};
+export function formatDatePainel(date: Date): string {
+  return format(date, "EEEE',' dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+}

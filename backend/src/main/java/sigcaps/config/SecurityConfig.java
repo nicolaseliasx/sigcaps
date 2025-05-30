@@ -42,7 +42,11 @@ public class SecurityConfig {
 								"/assets/**",
 								"/css/**",
 								"/js/**",
-								"/ws/**"
+								"/ws/**",
+								"/v3/api-docs/**",
+								"/swagger-ui/**",
+								"/swagger-resources/**",
+								"/swagger-ui.html"
 						).permitAll()
 						.anyRequest().authenticated()
 				)

@@ -2,6 +2,8 @@ package sigcaps.service;
 
 import java.security.Key;
 import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -23,19 +25,25 @@ public class TokenService {
 	}
 
 	public String generateToken(String accessKey) {
+		Instant now = Instant.now();
+		Instant expiration = now.plus(EXPIRATION_TIME, ChronoUnit.MILLIS);
+
 		return Jwts.builder()
 				.setSubject(accessKey)
-				.setIssuedAt(new Date())
-				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+				.setIssuedAt(Date.from(now))
+				.setExpiration(Date.from(expiration))
 				.signWith(getSigningKey(), SignatureAlgorithm.HS256)
 				.compact();
 	}
 
 	public String generateRefreshToken(String accessKey) {
+		Instant now = Instant.now();
+		Instant expiration = now.plus(REFRESH_EXPIRATION_TIME, ChronoUnit.MILLIS);
+
 		return Jwts.builder()
 				.setSubject(accessKey)
-				.setIssuedAt(new Date())
-				.setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION_TIME))
+				.setIssuedAt(Date.from(now))
+				.setExpiration(Date.from(expiration))
 				.signWith(getSigningKey(), SignatureAlgorithm.HS256)
 				.compact();
 	}
@@ -52,7 +60,8 @@ public class TokenService {
 					.parseClaimsJws(token)
 					.getBody();
 
-			return claims.getExpiration().after(new Date());
+			Instant expiration = claims.getExpiration().toInstant();
+			return expiration.isAfter(Instant.now());
 
 		} catch (Exception e) {
 			return false;
@@ -62,11 +71,5 @@ public class TokenService {
 	public String getAccessKeyFromToken(String token) {
 		return Jwts.parserBuilder().setSigningKey(getSigningKey()).build()
 				.parseClaimsJws(token).getBody().getSubject();
-	}
-
-	private static String generateSecretKey() {
-		byte[] key = new byte[32]; // 256 bits
-		new SecureRandom().nextBytes(key);
-		return Base64.getEncoder().encodeToString(key);
 	}
 }

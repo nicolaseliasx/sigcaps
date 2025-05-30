@@ -40,7 +40,11 @@ public class RestJwtFilter extends OncePerRequestFilter {
 			"/assets/**",
 			"/css/**",
 			"/js/**",
-			"/favicon.ico"
+			"/favicon.ico",
+			"/v3/api-docs/**",
+			"/swagger-ui/**",
+			"/swagger-resources/**",
+			"/swagger-ui.html"
 	);
 
 	@Override

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useConfig } from "../provider/useConfig";
+import { useConfig } from "../provider/config/useConfig";
 
 export const useTextToSpeech = () => {
   const { config } = useConfig();
