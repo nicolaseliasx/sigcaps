@@ -30,7 +30,7 @@ Certifique-se de ter as seguintes ferramentas instaladas em seu sistema com as v
 
 2.  **Iniciar os Serviços de Dependência (Banco de Dados MongoDB):**
     O SIGCAPS utiliza um banco de dados MongoDB para persistência de dados, como a chave de autenticação de aplicações e o histórico de chamadas. Este banco de dados é configurado para ser executado via Docker Compose.
-    No diretório raiz do projeto (onde se encontra o arquivo `docker-compose.yml`), execute:
+    No diretório raiz do projeto (onde se encontra o arquivo `compose.yml`), execute:
 
     ```bash
     docker compose up -d
