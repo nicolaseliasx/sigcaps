@@ -26,15 +26,17 @@ public class ChamadaPacienteService {
 
 	public void chamarPaciente(ChamadaPacienteDto dto) {
 		dto.setHorario(LocalDateTime.now(clock));
-		this.saveHistorico(dto);
+		historicoService.convertAndSave(dto);
 		dto.setHistorico(historicoService.getUltimos10Registros().stream().map(
-				document -> modelMapper.map(document, HistoricoChamadosDto.class)
+				document -> {
+					HistoricoChamadosDto historicoDto = new HistoricoChamadosDto();
+					historicoDto.setNomePaciente(document.getNomePaciente());
+					historicoDto.setClassificacao(document.getClassificacao());
+					historicoDto.setHorario(document.getHorario());
+					historicoDto.setTipoServico(document.getTiposServico());
+					return historicoDto;
+				}
 		).toList());
 		messagingService.convertAndSend("/topic/chamadaPaciente", dto);
-	}
-
-	private void saveHistorico(ChamadaPacienteDto dto) {
-		HistoricoChamados historico = modelMapper.map(dto, HistoricoChamados.class);
-		historicoService.save(historico);
 	}
 }
